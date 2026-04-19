@@ -1,5 +1,5 @@
 public with sharing class OncoDiscoveryProviders {
-    /** Strip trailing parenthetical notes so LIKE matches taxonomy/title (e.g. "Medical Oncology (new consult)"). */
+    /** Strip trailing parenthetical notes so LIKE matches CareSpecialty/Title (e.g. "Medical Oncology (new consult)"). */
     private static String normalizeSpecialtyToken(String raw) {
         if (String.isBlank(raw)) {
             return null;
@@ -77,7 +77,7 @@ public with sharing class OncoDiscoveryProviders {
     public class FindProvidersRequest {
         @InvocableVariable(
             label='Department or specialty'
-            description='Matches CareSpecialty name, HealthcareProviderTaxonomy, or Practitioner.Title (e.g. Gynecologic Oncology, Pediatrics).'
+            description='Matches CareSpecialty name or Practitioner.Title (e.g. Gynecologic Oncology, Pediatrics).'
         )
         public String specialty;
         @InvocableVariable(label='Facility Name Contains')
@@ -94,7 +94,7 @@ public with sharing class OncoDiscoveryProviders {
 
     @InvocableMethod(
         label='Find Providers'
-        description='Finds HealthcareProvider rows; filters by Practitioner.Title, HealthcareProviderTaxonomy.Name, and standard CareSpecialty via HealthcareProviderSpecialty (department/specialty browse).'
+        description='Finds HealthcareProvider rows; filters by Practitioner.Title and standard CareSpecialty via HealthcareProviderSpecialty (department/specialty browse).'
         category='Onco'
     )
     public static List<List<ProviderRow>> findProviders(List<FindProvidersRequest> requests) {
@@ -126,16 +126,6 @@ public with sharing class OncoDiscoveryProviders {
                 WHERE Name LIKE 'Dr.%' AND Practitioner.Title LIKE :likeSpec
             ]) {
                 bySpecialty.add(hpTitle.Id);
-            }
-            for (HealthcareProviderTaxonomy hpt : [
-                SELECT HealthcareProviderId
-                FROM HealthcareProviderTaxonomy
-                WHERE
-                    IsActive = true
-                    AND HealthcareProviderId != null
-                    AND Name LIKE :likeSpec
-            ]) {
-                bySpecialty.add(hpt.HealthcareProviderId);
             }
             Set<Id> contactIdsFromCareSpecialty = new Set<Id>();
             for (HealthcareProviderSpecialty hps : [
@@ -202,24 +192,6 @@ public with sharing class OncoDiscoveryProviders {
             ];
         }
 
-        Set<Id> outIds = new Set<Id>();
-        for (HealthcareProvider hp : rows) {
-            outIds.add(hp.Id);
-        }
-        Map<Id, String> taxonomyHintByProvider = new Map<Id, String>();
-        if (!outIds.isEmpty()) {
-            for (HealthcareProviderTaxonomy t : [
-                SELECT HealthcareProviderId, Name, IsPrimaryTaxonomy
-                FROM HealthcareProviderTaxonomy
-                WHERE IsActive = true AND HealthcareProviderId IN :outIds
-                ORDER BY IsPrimaryTaxonomy DESC
-            ]) {
-                if (!taxonomyHintByProvider.containsKey(t.HealthcareProviderId)) {
-                    taxonomyHintByProvider.put(t.HealthcareProviderId, t.Name);
-                }
-            }
-        }
-
         Set<Id> practitionerContactIds = new Set<Id>();
         for (HealthcareProvider hp : rows) {
             if (hp.PractitionerId != null) {
@@ -267,7 +239,7 @@ public with sharing class OncoDiscoveryProviders {
                 : null;
             r.specialtyHint = String.isNotBlank(titleHint)
                 ? titleHint
-                : (String.isNotBlank(careSpecHint) ? careSpecHint : taxonomyHintByProvider.get(hp.Id));
+                : careSpecHint;
             out.add(r);
         }
         return new List<List<ProviderRow>>{ out };
