@@ -75,8 +75,7 @@ private class OncoServicesIntegrationTest {
         WorkType wt = [SELECT Id FROM WorkType WHERE Name = 'Onco New Consult' LIMIT 1];
 
         OncoSchedulingBook.BookAppointmentRequest br = new OncoSchedulingBook.BookAppointmentRequest();
-        br.patientAccountId = patient.Id;
-        br.patientContactId = patient.PersonContactId;
+        br.patientLookupEmail = 'priya.sharma@example.com';
         br.healthcareFacilityId = fac.Id;
         br.healthcareProviderId = hp.Id;
         br.workTypeId = wt.Id;
@@ -87,42 +86,39 @@ private class OncoServicesIntegrationTest {
             new List<OncoSchedulingBook.BookAppointmentRequest>{ br }
         );
         System.assertEquals(true, bookOut[0].success, bookOut[0].message);
-        Id saId = bookOut[0].serviceAppointmentId;
+        String apptNum = bookOut[0].appointmentNumber;
+        System.assertNotEquals(null, apptNum, 'Appointment number should be returned');
 
-        OncoSchedulingReschedule.RescheduleRequest rr = new OncoSchedulingReschedule.RescheduleRequest();
-        rr.serviceAppointmentId = saId;
-        rr.patientAccountId = patient.Id;
-        rr.newStartTimeUtc = bookStart.addHours(2);
-        List<OncoSchedulingReschedule.MutationResult> resOut = OncoSchedulingReschedule.rescheduleAppointment(
-            new List<OncoSchedulingReschedule.RescheduleRequest>{ rr }
+        OncoAppointmentManager.ManageRequest rescheduleReq = new OncoAppointmentManager.ManageRequest();
+        rescheduleReq.actionType = 'Reschedule';
+        rescheduleReq.appointmentNumber = apptNum;
+        rescheduleReq.patientLookupEmail = 'priya.sharma@example.com';
+        rescheduleReq.newStartTime = bookStart.addHours(2).formatGmt('yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'');
+        List<OncoAppointmentManager.ManageResult> resOut = OncoAppointmentManager.manageAppointment(
+            new List<OncoAppointmentManager.ManageRequest>{ rescheduleReq }
         );
-        System.assertEquals(true, resOut[0].success, resOut[0].message);
+        System.assertEquals(true, resOut[0].isSuccess, resOut[0].message);
 
         OncoSchedulingListAppointments.ListApptsRequest lr = new OncoSchedulingListAppointments.ListApptsRequest();
-        lr.patientAccountId = patient.Id;
+        lr.patientLookupEmail = 'priya.sharma@example.com';
         lr.includePast = true;
         List<List<OncoSchedulingListAppointments.AppointmentRow>> listOut = OncoSchedulingListAppointments.getMyAppointments(
             new List<OncoSchedulingListAppointments.ListApptsRequest>{ lr }
         );
         System.assert(!listOut[0].isEmpty());
 
-        OncoSchedulingCancel.CancelRequest cr = new OncoSchedulingCancel.CancelRequest();
-        cr.serviceAppointmentId = saId;
-        cr.patientAccountId = patient.Id;
-        List<OncoSchedulingCancel.MutationResult> canOut = OncoSchedulingCancel.cancelAppointment(
-            new List<OncoSchedulingCancel.CancelRequest>{ cr }
+        OncoAppointmentManager.ManageRequest cancelReq = new OncoAppointmentManager.ManageRequest();
+        cancelReq.actionType = 'Cancel';
+        cancelReq.appointmentNumber = apptNum;
+        cancelReq.patientLookupEmail = 'priya.sharma@example.com';
+        List<OncoAppointmentManager.ManageResult> canOut = OncoAppointmentManager.manageAppointment(
+            new List<OncoAppointmentManager.ManageRequest>{ cancelReq }
         );
-        System.assertEquals(true, canOut[0].success, canOut[0].message);
+        System.assertEquals(true, canOut[0].isSuccess, canOut[0].message);
     }
 
     @IsTest
     static void book_via_lookup_email_and_default_worktype() {
-        Account patient = [
-            SELECT Id
-            FROM Account
-            WHERE IsPersonAccount = true AND PersonEmail = 'priya.sharma@example.com'
-            LIMIT 1
-        ];
         HealthcareFacility fac = [SELECT Id FROM HealthcareFacility WHERE Name = 'Onco Global - Mumbai Andheri' LIMIT 1];
         HealthcareProvider hp = [SELECT Id FROM HealthcareProvider WHERE Name = 'Dr. Arjun Mehta' LIMIT 1];
 
@@ -137,13 +133,14 @@ private class OncoServicesIntegrationTest {
         );
         System.assertEquals(true, bookOut[0].success, bookOut[0].message);
 
-        OncoSchedulingCancel.CancelRequest cr = new OncoSchedulingCancel.CancelRequest();
-        cr.serviceAppointmentId = bookOut[0].serviceAppointmentId;
-        cr.patientAccountId = patient.Id;
-        List<OncoSchedulingCancel.MutationResult> canOut = OncoSchedulingCancel.cancelAppointment(
-            new List<OncoSchedulingCancel.CancelRequest>{ cr }
+        OncoAppointmentManager.ManageRequest cancelReq = new OncoAppointmentManager.ManageRequest();
+        cancelReq.actionType = 'Cancel';
+        cancelReq.appointmentNumber = bookOut[0].appointmentNumber;
+        cancelReq.patientLookupEmail = 'priya.sharma@example.com';
+        List<OncoAppointmentManager.ManageResult> canOut = OncoAppointmentManager.manageAppointment(
+            new List<OncoAppointmentManager.ManageRequest>{ cancelReq }
         );
-        System.assertEquals(true, canOut[0].success, canOut[0].message);
+        System.assertEquals(true, canOut[0].isSuccess, canOut[0].message);
     }
 
     @IsTest

@@ -1,5 +1,5 @@
 {
-  "required" : [ "healthcareFacilityId", "healthcareProviderId" ],
+  "required" : [ "healthcareFacilityId" ],
   "unevaluatedProperties" : false,
   "properties" : {
     "healthcareFacilityId" : {
@@ -11,7 +11,14 @@
     },
     "healthcareProviderId" : {
       "title" : "Healthcare Provider Id",
-      "description" : "HealthcareProvider Id",
+      "description" : "HealthcareProvider Id for a named doctor. Omit if using Care Specialty Id.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "careSpecialtyId" : {
+      "title" : "Care Specialty Id",
+      "description" : "CareSpecialty Id for department-first slots at this facility (all matching providers). Omit if Provider Id is set.",
       "lightning:type" : "lightning__textType",
       "lightning:isPII" : false,
       "copilotAction:isUserInput" : false

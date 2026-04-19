@@ -8,6 +8,8 @@ public with sharing class OncoDiscoverySpecialties {
         @InvocableVariable public String shortDescription;
         /** CareSpecialty.SpecialtyType when row comes from CareSpecialty; taxonomy rows leave this blank. */
         @InvocableVariable public String specialtyType;
+        /** Populated for CareSpecialty rows; pass to Get Available Slots as careSpecialtyId for department-first slots. */
+        @InvocableVariable public String careSpecialtyId;
     }
 
     @InvocableMethod(
@@ -23,7 +25,7 @@ public with sharing class OncoDiscoverySpecialties {
         List<CareSpecialty> careRows;
         if (String.isBlank(q)) {
             careRows = [
-                SELECT Name, SpecialtyCode, SpecialtyType
+                SELECT Id, Name, SpecialtyCode, SpecialtyType
                 FROM CareSpecialty
                 ORDER BY Name
                 LIMIT 50
@@ -31,7 +33,7 @@ public with sharing class OncoDiscoverySpecialties {
         } else {
             String likeVal = '%' + q + '%';
             careRows = [
-                SELECT Name, SpecialtyCode, SpecialtyType
+                SELECT Id, Name, SpecialtyCode, SpecialtyType
                 FROM CareSpecialty
                 WHERE Name LIKE :likeVal
                 ORDER BY Name
@@ -49,6 +51,7 @@ public with sharing class OncoDiscoverySpecialties {
             seenLower.add(key);
             SpecialtyRow s = new SpecialtyRow();
             s.name = cs.Name;
+            s.careSpecialtyId = cs.Id != null ? String.valueOf(cs.Id) : null;
             s.specialtyType = cs.SpecialtyType;
             String code = String.isNotBlank(cs.SpecialtyCode) ? ' Code: ' + cs.SpecialtyCode : '';
             String st = String.isNotBlank(cs.SpecialtyType) ? ' Category: ' + cs.SpecialtyType : '';

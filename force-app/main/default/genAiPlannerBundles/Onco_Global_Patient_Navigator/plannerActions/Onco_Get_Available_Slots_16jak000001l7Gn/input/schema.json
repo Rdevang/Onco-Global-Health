@@ -1,5 +1,5 @@
 {
-  "required" : [ "healthcareFacilityId", "healthcareProviderId", "workTypeId" ],
+  "required" : [ "healthcareFacilityId" ],
   "unevaluatedProperties" : false,
   "properties" : {
     "healthcareFacilityId" : {
@@ -11,14 +11,21 @@
     },
     "healthcareProviderId" : {
       "title" : "Healthcare Provider Id",
-      "description" : "HealthcareProvider Id",
+      "description" : "HealthcareProvider Id for a named doctor. Omit if using Care Specialty Id.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "careSpecialtyId" : {
+      "title" : "Care Specialty Id",
+      "description" : "CareSpecialty Id for department-first slots at this facility. Omit if Provider Id is set.",
       "lightning:type" : "lightning__textType",
       "lightning:isPII" : false,
       "copilotAction:isUserInput" : false
     },
     "workTypeId" : {
       "title" : "Work Type Id",
-      "description" : "WorkType Id (e.g. Onco New Consult)",
+      "description" : "Optional WorkType Id; omit to default to Onco New Consult.",
       "lightning:type" : "lightning__textType",
       "lightning:isPII" : false,
       "copilotAction:isUserInput" : false

@@ -19,6 +19,15 @@
       "copilotAction:isUsedByPlanner" : true,
       "copilotAction:useHydratedPrompt" : true
     },
+    "plannerReferenceText" : {
+      "title" : "Planner reference (internal)",
+      "description" : "Per-slot HealthcareProvider Id lines for Book only. Do not show the patient.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true,
+      "copilotAction:useHydratedPrompt" : true
+    },
     "message" : {
       "title" : "Message",
       "description" : "Status text.",

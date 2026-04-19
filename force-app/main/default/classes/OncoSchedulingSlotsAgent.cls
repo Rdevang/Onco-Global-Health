@@ -8,8 +8,16 @@ public with sharing class OncoSchedulingSlotsAgent {
     public class AgentRequest {
         @InvocableVariable(required = true label = 'Healthcare Facility Id' description = 'HealthcareFacility Id from Find Facilities.')
         public String healthcareFacilityId;
-        @InvocableVariable(required = true label = 'Healthcare Provider Id' description = 'HealthcareProvider Id from Find Providers.')
+        @InvocableVariable(
+            label = 'Healthcare Provider Id'
+            description = 'HealthcareProvider Id from Find Providers. Omit when using Care Specialty Id (department-first slots).'
+        )
         public String healthcareProviderId;
+        @InvocableVariable(
+            label = 'Care Specialty Id'
+            description = 'Standard CareSpecialty Id: slots across all providers at this facility with this specialty. Omit when Provider Id is set.'
+        )
+        public String careSpecialtyId;
         @InvocableVariable(
             label = 'Work Type Id'
             description = 'WorkType Id; omit to use Onco New Consult when present in the org.'
@@ -26,18 +34,25 @@ public with sharing class OncoSchedulingSlotsAgent {
     public class AgentResult {
         @InvocableVariable public Boolean success;
         @InvocableVariable public String slotsText;
+        /** Per-slot HealthcareProvider Ids for Book; parallel to slotsText; do not read aloud. */
+        @InvocableVariable(
+            label = 'Planner reference (internal)'
+            description = 'Per-slot provider Ids for Book Appointment; never show the patient.'
+        )
+        public String plannerReferenceText;
         @InvocableVariable public String message;
     }
 
     @InvocableMethod(
         label = 'Get Available Appointment Slots'
-        description = 'Returns candidate booking times for a facility, provider, and work type.'
+        description = 'Returns candidate booking times for a facility and work type: either a named provider or all providers for a Care Specialty at the facility.'
         category = 'Onco'
     )
     public static List<AgentResult> getSlotsForAgent(List<AgentRequest> requests) {
         AgentResult r = new AgentResult();
         r.success = false;
         r.slotsText = '';
+        r.plannerReferenceText = '';
         r.message = '';
         if (requests == null || requests.isEmpty()) {
             r.message = 'No request';
@@ -56,8 +71,11 @@ public with sharing class OncoSchedulingSlotsAgent {
                 wtId = wts[0].Id;
             }
         }
-        if (String.isBlank(ar.healthcareFacilityId) || String.isBlank(ar.healthcareProviderId) || String.isBlank(wtId)) {
-            r.message = 'Facility Id and Provider Id are required; Work Type Id is required unless Onco New Consult exists.';
+        Boolean hasProv = String.isNotBlank(ar.healthcareProviderId);
+        Boolean hasSpec = String.isNotBlank(ar.careSpecialtyId);
+        if (String.isBlank(ar.healthcareFacilityId) || String.isBlank(wtId) || (!hasProv && !hasSpec) || (hasProv && hasSpec)) {
+            r.message =
+                'Facility Id and Work Type (or default Onco New Consult) are required. Pass either Healthcare Provider Id or Care Specialty Id—not both, not neither.';
             return new List<AgentResult>{ r };
         }
         try {
@@ -72,6 +90,7 @@ public with sharing class OncoSchedulingSlotsAgent {
             OncoSchedulingGetSlots.GetSlotsRequest req = new OncoSchedulingGetSlots.GetSlotsRequest();
             req.healthcareFacilityId = ar.healthcareFacilityId;
             req.healthcareProviderId = ar.healthcareProviderId;
+            req.careSpecialtyId = ar.careSpecialtyId;
             req.workTypeId = wtId;
             req.fromTimeUtc = fromUtc;
             req.toTimeUtc = toUtc;
@@ -83,6 +102,7 @@ public with sharing class OncoSchedulingSlotsAgent {
                 ? wrapped[0]
                 : new List<OncoSchedulingGetSlots.SlotResult>();
             List<String> lines = new List<String>();
+            List<String> refLines = new List<String>();
             for (OncoSchedulingGetSlots.SlotResult row : rows) {
                 if (row == null) {
                     continue;
@@ -100,9 +120,19 @@ public with sharing class OncoSchedulingSlotsAgent {
                             ' | ' +
                             (String.isNotBlank(row.providerName) ? row.providerName : '')
                     );
+                    if (String.isNotBlank(row.healthcareProviderId)) {
+                        refLines.add(
+                            '- Start (UTC): ' +
+                                String.valueOf(row.startTime) +
+                                ' | HealthcareProvider Id: ' +
+                                row.healthcareProviderId +
+                                (String.isNotBlank(row.providerName) ? ' | ' + row.providerName : '')
+                        );
+                    }
                 }
             }
             r.slotsText = String.join(lines, '\n');
+            r.plannerReferenceText = String.join(refLines, '\n');
             r.success = true;
             r.message = rows.isEmpty() ? 'No slots returned.' : 'Slot candidates listed.';
             return new List<AgentResult>{ r };

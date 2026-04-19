@@ -1,33 +1,13 @@
 public with sharing class OncoSchedulingBook {
     private static final String DEFAULT_WORK_TYPE_NAME = 'Onco New Consult';
 
-    /**
-     * Resolves Person Accounts by email without relying on the caller's row access (Agent / Experience guest).
-     */
-    private without sharing class PatientEmailResolver {
-        List<Account> findByPersonEmail(String em) {
-            return [
-                SELECT Id, PersonContactId
-                FROM Account
-                WHERE IsPersonAccount = TRUE AND PersonEmail = :em
-                LIMIT 1
-            ];
-        }
-    }
-
     public class BookAppointmentRequest {
         @InvocableVariable(
-            label = 'Patient Account Id'
-            description = 'Person Account Id for ParentRecordId. Omit when Patient lookup email is set.'
-        )
-        public String patientAccountId;
-        @InvocableVariable(
+            required = true
             label = 'Patient lookup email'
-            description = 'Plain Person Account email when Account Id is unknown. If a JSON or structured value is sent, the first email address in the text is used.'
+            description = 'Plain email the patient confirmed; resolves Person Account. Users do not provide Salesforce record Ids.'
         )
         public String patientLookupEmail;
-        @InvocableVariable(label = 'Patient Contact Id')
-        public String patientContactId;
         @InvocableVariable(required = true label = 'Healthcare Facility Id')
         public String healthcareFacilityId;
         @InvocableVariable(required = true label = 'Healthcare Provider Id')
@@ -46,7 +26,6 @@ public with sharing class OncoSchedulingBook {
 
     public class MutationResult {
         @InvocableVariable public Boolean success;
-        @InvocableVariable public String serviceAppointmentId;
         /** Display number from ServiceAppointment (AppointmentNumber, or Name if blank). */
         @InvocableVariable(
             label = 'Appointment Number'
@@ -72,7 +51,7 @@ public with sharing class OncoSchedulingBook {
 
     @InvocableMethod(
         label='Book Appointment'
-        description='Creates a ServiceAppointment and AssignedResource.'
+        description='Creates a ServiceAppointment and AssignedResource. Patient identity is email only (no Account or Contact Ids from the caller).'
         category='Onco'
     )
     public static List<MutationResult> bookAppointment(List<BookAppointmentRequest> requests) {
@@ -84,20 +63,11 @@ public with sharing class OncoSchedulingBook {
         }
         BookAppointmentRequest req = requests[0];
         try {
-            String acctIdStr = req.patientAccountId;
-            String contactIdStr = req.patientContactId;
-            if (String.isBlank(acctIdStr)) {
-                String em = normalizePatientLookupEmail(req.patientLookupEmail);
-                if (String.isNotBlank(em)) {
-                    List<Account> accRows = new PatientEmailResolver().findByPersonEmail(em);
-                    if (!accRows.isEmpty()) {
-                        acctIdStr = accRows[0].Id;
-                        if (String.isBlank(contactIdStr) && accRows[0].PersonContactId != null) {
-                            contactIdStr = accRows[0].PersonContactId;
-                        }
-                    }
-                }
-            }
+            OncoPatientEmailLookup.PersonMatch match = OncoPatientEmailLookup.findPersonByEmail(req.patientLookupEmail);
+            String acctIdStr = match != null && match.accountId != null ? String.valueOf(match.accountId) : null;
+            String contactIdStr =
+                match != null && match.personContactId != null ? String.valueOf(match.personContactId) : null;
+
             String wtId = req.workTypeId;
             if (String.isBlank(wtId)) {
                 List<WorkType> wts = [
@@ -114,7 +84,7 @@ public with sharing class OncoSchedulingBook {
             if (String.isBlank(acctIdStr) || String.isBlank(req.healthcareFacilityId) || String.isBlank(req.healthcareProviderId)
                 || String.isBlank(wtId) || startDt == null) {
                 r.success = false;
-                r.message = 'Missing or invalid inputs (patient Account or lookup email, facility, provider, work type, start time ISO UTC).';
+                r.message = 'Missing or invalid inputs (patient lookup email must match a Person Account, facility, provider, work type, start time ISO UTC).';
                 return new List<MutationResult>{ r };
             }
             Id territoryId = OncoSchedulerGateway.getTerritoryIdForFacility(req.healthcareFacilityId);
@@ -149,7 +119,6 @@ public with sharing class OncoSchedulingBook {
                 LIMIT 1
             ];
             r.success = true;
-            r.serviceAppointmentId = created.Id;
             r.appointmentNumber = String.isNotBlank(created.AppointmentNumber)
                 ? created.AppointmentNumber
                 : (String.isNotBlank(created.Subject) ? created.Subject : String.valueOf(created.Id));
@@ -198,45 +167,5 @@ public with sharing class OncoSchedulingBook {
             return null;
         }
         return d.formatGmt('yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'');
-    }
-
-    /**
-     * Planner/LLM sometimes passes JSON blobs or map-like strings instead of a bare email.
-     * Extracts the first RFC-like address for PersonEmail lookup.
-     */
-    @TestVisible
-    private static String normalizePatientLookupEmail(String raw) {
-        if (String.isBlank(raw)) {
-            return null;
-        }
-        String s = raw.trim();
-        if (s.startsWith('{')) {
-            try {
-                Object o = JSON.deserializeUntyped(s);
-                if (o instanceof Map<String, Object>) {
-                    Map<String, Object> m = (Map<String, Object>) o;
-                    for (String k : new List<String>{ 'recipientId', 'email', 'personEmail' }) {
-                        if (m.containsKey(k) && m.get(k) != null) {
-                            String v = String.valueOf(m.get(k)).trim();
-                            String extracted = extractFirstEmail(v);
-                            if (String.isNotBlank(extracted)) {
-                                return extracted;
-                            }
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                // Non-JSON (e.g. {recipientId=me@x.com, ...}); fall through to regex on full string
-            }
-        }
-        return extractFirstEmail(s);
-    }
-
-    private static String extractFirstEmail(String s) {
-        if (String.isBlank(s)) {
-            return null;
-        }
-        Matcher m = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}').matcher(s);
-        return m.find() ? m.group() : null;
     }
 }

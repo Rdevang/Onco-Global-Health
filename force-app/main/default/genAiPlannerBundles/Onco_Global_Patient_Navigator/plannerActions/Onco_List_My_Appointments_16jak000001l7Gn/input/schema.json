@@ -1,12 +1,12 @@
 {
-  "required" : [ "patientAccountId" ],
+  "required" : [ "patientLookupEmail" ],
   "unevaluatedProperties" : false,
   "properties" : {
-    "patientAccountId" : {
-      "title" : "Patient Account Id",
-      "description" : "Person Account Id (ParentRecordId on ServiceAppointment).",
-      "lightning:type" : "lightning__textType",
-      "lightning:isPII" : false,
+    "patientLookupEmail" : {
+      "title" : "Patient lookup email",
+      "description" : "Plain Person Account email for the patient. Do not pass a Salesforce Account Id.",
+      "lightning:type" : "lightning__emailType",
+      "lightning:isPII" : true,
       "copilotAction:isUserInput" : false
     },
     "includePast" : {

@@ -1,5 +1,5 @@
 {
-  "required" : [ "actionType", "appointmentId" ],
+  "required" : [ "actionType", "appointmentNumber", "patientLookupEmail" ],
   "unevaluatedProperties" : false,
   "properties" : {
     "actionType" : {
@@ -9,11 +9,18 @@
       "lightning:isPII" : false,
       "copilotAction:isUserInput" : false
     },
-    "appointmentId" : {
-      "title" : "Appointment ID",
-      "description" : "The unique ID of the Service Appointment. You must extract this from the conversation history (e.g., from the 'Get Appointment Details' action).",
-      "lightning:type" : "lightning__recordIdType",
+    "appointmentNumber" : {
+      "title" : "Appointment number",
+      "description" : "Human-readable appointment number from the patient confirmation (e.g. SA-0017). Not a Salesforce record Id.",
+      "lightning:type" : "lightning__textType",
       "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "patientLookupEmail" : {
+      "title" : "Patient lookup email",
+      "description" : "Plain email on file to verify the booking belongs to this patient. Not a Salesforce record Id.",
+      "lightning:type" : "lightning__emailType",
+      "lightning:isPII" : true,
       "copilotAction:isUserInput" : false
     },
     "newStartTime" : {

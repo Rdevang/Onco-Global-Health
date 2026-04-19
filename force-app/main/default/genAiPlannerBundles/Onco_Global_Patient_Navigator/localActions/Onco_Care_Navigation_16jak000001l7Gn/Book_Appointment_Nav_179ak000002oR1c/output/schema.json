@@ -10,18 +10,9 @@
       "copilotAction:isUsedByPlanner" : true,
       "copilotAction:useHydratedPrompt" : false
     },
-    "serviceAppointmentId" : {
-      "title" : "Service Appointment ID",
-      "description" : "Created ServiceAppointment Id (internal; do not show the patient).",
-      "lightning:type" : "lightning__textType",
-      "lightning:isPII" : false,
-      "copilotAction:isDisplayable" : false,
-      "copilotAction:isUsedByPlanner" : true,
-      "copilotAction:useHydratedPrompt" : false
-    },
     "appointmentNumber" : {
       "title" : "Appointment Number",
-      "description" : "Display appointment number (or record name) for the patient confirmation.",
+      "description" : "Display appointment number for the patient confirmation.",
       "lightning:type" : "lightning__textType",
       "lightning:isPII" : false,
       "copilotAction:isDisplayable" : true,

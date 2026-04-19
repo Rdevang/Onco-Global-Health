@@ -1,13 +1,16 @@
 public with sharing class OncoSchedulingListAppointments {
     public class ListApptsRequest {
-        @InvocableVariable(required=true label='Patient Account Id')
-        public String patientAccountId;
-        @InvocableVariable(label='Include Past')
+        @InvocableVariable(
+            required = true
+            label = 'Patient lookup email'
+            description = 'Plain Person Account email; resolves the patient without a Salesforce record Id from the caller.'
+        )
+        public String patientLookupEmail;
+        @InvocableVariable(label = 'Include Past')
         public Boolean includePast;
     }
 
     public class AppointmentRow {
-        @InvocableVariable public String serviceAppointmentId;
         @InvocableVariable public String appointmentNumber;
         @InvocableVariable public Datetime startTime;
         @InvocableVariable public Datetime endTime;
@@ -18,7 +21,7 @@ public with sharing class OncoSchedulingListAppointments {
 
     @InvocableMethod(
         label='Get My Appointments'
-        description='Lists ServiceAppointments for a patient Account (ParentRecordId).'
+        description='Lists ServiceAppointments for the patient identified by email (no Account Id from the caller).'
         category='Onco'
     )
     public static List<List<AppointmentRow>> getMyAppointments(List<ListApptsRequest> requests) {
@@ -28,7 +31,8 @@ public with sharing class OncoSchedulingListAppointments {
             return wrap;
         }
         ListApptsRequest req = requests[0];
-        if (String.isBlank(req.patientAccountId)) {
+        Id patientAcct = OncoPatientEmailLookup.findPersonAccountIdByEmail(req.patientLookupEmail);
+        if (patientAcct == null) {
             wrap.add(new List<AppointmentRow>());
             return wrap;
         }
@@ -37,17 +41,17 @@ public with sharing class OncoSchedulingListAppointments {
         List<ServiceAppointment> rows;
         if (past) {
             rows = [
-                SELECT Id, AppointmentNumber, SchedStartTime, SchedEndTime, Status, WorkType.Name, ServiceTerritory.Name
+                SELECT AppointmentNumber, SchedStartTime, SchedEndTime, Status, WorkType.Name, ServiceTerritory.Name
                 FROM ServiceAppointment
-                WHERE ParentRecordId = :req.patientAccountId
+                WHERE ParentRecordId = :patientAcct
                 ORDER BY SchedStartTime DESC
                 LIMIT 50
             ];
         } else {
             rows = [
-                SELECT Id, AppointmentNumber, SchedStartTime, SchedEndTime, Status, WorkType.Name, ServiceTerritory.Name
+                SELECT AppointmentNumber, SchedStartTime, SchedEndTime, Status, WorkType.Name, ServiceTerritory.Name
                 FROM ServiceAppointment
-                WHERE ParentRecordId = :req.patientAccountId AND SchedStartTime >= :now
+                WHERE ParentRecordId = :patientAcct AND SchedStartTime >= :now
                 ORDER BY SchedStartTime ASC
                 LIMIT 50
             ];
@@ -55,7 +59,6 @@ public with sharing class OncoSchedulingListAppointments {
         List<AppointmentRow> out = new List<AppointmentRow>();
         for (ServiceAppointment sa : rows) {
             AppointmentRow a = new AppointmentRow();
-            a.serviceAppointmentId = sa.Id;
             a.appointmentNumber = sa.AppointmentNumber;
             a.startTime = sa.SchedStartTime;
             a.endTime = sa.SchedEndTime;

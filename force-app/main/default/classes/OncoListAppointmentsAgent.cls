@@ -3,8 +3,12 @@
  */
 public with sharing class OncoListAppointmentsAgent {
     public class AgentRequest {
-        @InvocableVariable(required = true label = 'Patient Account Id' description = 'Person Account Id for the patient.')
-        public String patientAccountId;
+        @InvocableVariable(
+            required = true
+            label = 'Patient lookup email'
+            description = 'Plain email for the patient; no Account Id from the user.'
+        )
+        public String patientLookupEmail;
         @InvocableVariable(label = 'Include Past' description = 'Include completed/canceled past visits')
         public Boolean includePast;
     }
@@ -17,7 +21,7 @@ public with sharing class OncoListAppointmentsAgent {
 
     @InvocableMethod(
         label = 'List My Appointments'
-        description = 'Lists ServiceAppointments for the patient account.'
+        description = 'Lists ServiceAppointments for the patient identified by email only.'
         category = 'Onco'
     )
     public static List<AgentResult> listAppointmentsForAgent(List<AgentRequest> requests) {
@@ -31,7 +35,7 @@ public with sharing class OncoListAppointmentsAgent {
         }
         try {
             OncoSchedulingListAppointments.ListApptsRequest req = new OncoSchedulingListAppointments.ListApptsRequest();
-            req.patientAccountId = requests[0].patientAccountId;
+            req.patientLookupEmail = requests[0].patientLookupEmail;
             req.includePast = requests[0].includePast;
             List<List<OncoSchedulingListAppointments.AppointmentRow>> wrapped = OncoSchedulingListAppointments.getMyAppointments(
                 new List<OncoSchedulingListAppointments.ListApptsRequest>{ req }

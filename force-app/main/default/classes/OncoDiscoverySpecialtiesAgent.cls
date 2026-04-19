@@ -10,6 +10,12 @@ public with sharing class OncoDiscoverySpecialtiesAgent {
     public class AgentResult {
         @InvocableVariable public Boolean success;
         @InvocableVariable public String specialtiesText;
+        /** CareSpecialty Id lines for Get Slots (department-first); do not read aloud to the patient. */
+        @InvocableVariable(
+            label = 'Planner reference (internal)'
+            description = 'CareSpecialty Ids for tool calls only; never show the patient.'
+        )
+        public String plannerReferenceText;
         @InvocableVariable public String message;
     }
 
@@ -22,6 +28,7 @@ public with sharing class OncoDiscoverySpecialtiesAgent {
         AgentResult r = new AgentResult();
         r.success = false;
         r.specialtiesText = '';
+        r.plannerReferenceText = '';
         r.message = '';
         if (requests == null || requests.isEmpty()) {
             r.message = 'No request';
@@ -37,6 +44,7 @@ public with sharing class OncoDiscoverySpecialtiesAgent {
                 ? wrapped[0]
                 : new List<OncoDiscoverySpecialties.SpecialtyRow>();
             List<String> lines = new List<String>();
+            List<String> refLines = new List<String>();
             for (OncoDiscoverySpecialties.SpecialtyRow row : rows) {
                 if (row == null) {
                     continue;
@@ -46,7 +54,16 @@ public with sharing class OncoDiscoverySpecialtiesAgent {
                     line += ' | Category: ' + row.specialtyType;
                 }
                 lines.add(line);
+                if (String.isNotBlank(row.careSpecialtyId)) {
+                    refLines.add(
+                        '- ' +
+                            (String.isNotBlank(row.name) ? row.name : 'CareSpecialty') +
+                            ' | CareSpecialty Id: ' +
+                            row.careSpecialtyId
+                    );
+                }
             }
+            r.plannerReferenceText = String.join(refLines, '\n');
             r.specialtiesText = String.join(lines, '\n');
             r.success = true;
             r.message = rows.isEmpty() ? 'No specialties found.' : 'Found ' + rows.size() + ' specialty row(s).';

@@ -4,7 +4,8 @@ private class OncoAppointmentManagerTest {
     static void manageAppointment_rejectsUnknownAction() {
         OncoAppointmentManager.ManageRequest req = new OncoAppointmentManager.ManageRequest();
         req.actionType = 'noop';
-        req.appointmentId = '000000000000000AAA';
+        req.appointmentNumber = 'SA-0000';
+        req.patientLookupEmail = 'nobody@example.com';
         List<OncoAppointmentManager.ManageResult> rows = OncoAppointmentManager.manageAppointment(
             new List<OncoAppointmentManager.ManageRequest>{ req }
         );

@@ -1,38 +1,24 @@
 {
-  "required" : [ "healthcareFacilityId", "healthcareProviderId", "startTimeUtc" ],
+  "required" : [ "patientLookupEmail", "healthcareFacilityId", "healthcareProviderId", "startTimeUtc" ],
   "unevaluatedProperties" : false,
   "properties" : {
-    "patientAccountId" : {
-      "title" : "Patient Account ID",
-      "description" : "Person Account Id. Omit if Patient lookup email is provided.",
-      "lightning:type" : "lightning__recordIdType",
-      "lightning:isPII" : false,
-      "copilotAction:isUserInput" : false
-    },
     "patientLookupEmail" : {
       "title" : "Patient lookup email",
-      "description" : "Single Person Account email only (e.g. meera.iyer@example.com). Do not pass JSON, maps, or notification payloads—plain email text.",
+      "description" : "Single Person Account email the patient confirmed (e.g. meera.iyer@example.com). Do not pass Account or Contact Ids.",
       "lightning:type" : "lightning__emailType",
       "lightning:isPII" : true,
       "copilotAction:isUserInput" : false
     },
-    "patientContactId" : {
-      "title" : "Patient Contact ID",
-      "description" : "Optional Contact Id linked to the patient.",
-      "lightning:type" : "lightning__recordIdType",
-      "lightning:isPII" : false,
-      "copilotAction:isUserInput" : false
-    },
     "healthcareFacilityId" : {
       "title" : "Healthcare Facility ID",
-      "description" : "HealthcareFacility Id from Find Facilities.",
+      "description" : "HealthcareFacility Id from Find Facilities plannerReferenceText (from discovery tools—not typed by the patient).",
       "lightning:type" : "lightning__recordIdType",
       "lightning:isPII" : false,
       "copilotAction:isUserInput" : false
     },
     "healthcareProviderId" : {
       "title" : "Healthcare Provider ID",
-      "description" : "HealthcareProvider Id from Find Providers.",
+      "description" : "HealthcareProvider Id from Find Providers or Get Slots plannerReferenceText (from discovery tools—not typed by the patient).",
       "lightning:type" : "lightning__recordIdType",
       "lightning:isPII" : false,
       "copilotAction:isUserInput" : false
