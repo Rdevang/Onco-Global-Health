@@ -1,0 +1,64 @@
+// Agent / Apex validation — run ONE statement at a time:
+//   sf data query -q "SELECT ..." -o Healthcloud
+// Or: sf data query --file scripts/soql/agent_validation_queries.soql -o Healthcloud
+// (If the CLI rejects multi-statement files, copy a single SELECT.)
+
+// --- Patient (seed: Priya Sharma, priya.sharma@example.com) ---
+SELECT Id, Name, PersonEmail FROM Account WHERE PersonEmail = 'priya.sharma@example.com' OR Name = 'Priya Sharma (Patient)' LIMIT 5
+
+// --- Facilities in Mumbai (expect >= 2) ---
+SELECT Id, Name, Account.BillingCity FROM HealthcareFacility WHERE Account.BillingCity LIKE '%Mumbai%' ORDER BY Name
+
+// --- Work types for booking ---
+SELECT Id, Name, EstimatedDuration FROM WorkType WHERE Name LIKE 'Onco %' ORDER BY Name
+
+// --- Seed ServiceAppointments (reschedule / cancel tests) ---
+SELECT Id, Subject, Status, SchedStartTime, ParentRecordId, WorkType.Name, ServiceTerritory.Name
+FROM ServiceAppointment
+WHERE Subject LIKE 'Onco seed%'
+ORDER BY SchedStartTime
+
+// --- Provider for discovery (Medical Oncology, Mumbai) ---
+SELECT Id, Name, Title FROM HealthcareProvider WHERE Name = 'Dr. Arjun Mehta' LIMIT 1
+
+// --- Bengaluru + Medical Oncology (matches OncoDiscoveryProviders: Title OR HealthcareProviderTaxonomy) ---
+SELECT Id, Name, Practitioner.Title
+FROM HealthcareProvider
+WHERE Name LIKE 'Dr.%'
+AND Id IN (
+    SELECT HealthcareProviderId
+    FROM HealthcarePractitionerFacility
+    WHERE IsActive = true
+    AND HealthcareFacility.Account.BillingCity LIKE '%Bengaluru%'
+)
+AND (
+    Practitioner.Title LIKE '%Medical Oncology%'
+    OR Id IN (
+        SELECT HealthcareProviderId
+        FROM HealthcareProviderTaxonomy
+        WHERE IsActive = true
+        AND HealthcareProviderId != null
+        AND Name LIKE '%Medical Oncology%'
+    )
+)
+ORDER BY Name
+LIMIT 80
+
+// --- Diagnostic: Bengaluru-linked providers (any specialty in Title) ---
+SELECT Id, Name, Practitioner.Title
+FROM HealthcareProvider
+WHERE Name LIKE 'Dr.%'
+AND Id IN (
+    SELECT HealthcareProviderId
+    FROM HealthcarePractitionerFacility
+    WHERE IsActive = true
+    AND HealthcareFacility.Account.BillingCity LIKE '%Bengaluru%'
+)
+ORDER BY Name
+LIMIT 80
+
+// --- Reference taxonomy master list (not linked to providers in seed — ProviderId null) ---
+SELECT Id, Name, HealthcareProviderId, PractitionerId FROM HealthcareProviderTaxonomy ORDER BY Name LIMIT 20
+
+// --- Knowledge articles (Phase 03) ---
+SELECT Id, Title, UrlName FROM Knowledge__kav WHERE PublishStatus = 'Online' LIMIT 5

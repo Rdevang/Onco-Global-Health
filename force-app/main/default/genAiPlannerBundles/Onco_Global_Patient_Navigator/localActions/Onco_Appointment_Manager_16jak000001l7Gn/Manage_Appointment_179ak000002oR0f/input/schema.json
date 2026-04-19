@@ -1,0 +1,28 @@
+{
+  "required" : [ "actionType", "appointmentId" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "actionType" : {
+      "title" : "Action Type",
+      "description" : "The specific modification to perform. Choose one: 'Cancel' or 'Reschedule'.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "appointmentId" : {
+      "title" : "Appointment ID",
+      "description" : "The unique ID of the Service Appointment. You must extract this from the conversation history (e.g., from the 'Get Appointment Details' action).",
+      "lightning:type" : "lightning__recordIdType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "newStartTime" : {
+      "title" : "New Start Time",
+      "description" : "The date and time requested for the reschedule, formatted as a standard Date/Time string. Leave blank if performing a 'Cancel' action.",
+      "lightning:type" : "lightning__dateTimeStringType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

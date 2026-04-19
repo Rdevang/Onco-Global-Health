@@ -1,0 +1,19 @@
+// Phase 02 verification - run each statement separately with:
+//   sf data query --file scripts/soql/verify_data_model.soql --target-org Healthcloud
+// Or copy-paste individual lines into Developer Console.
+
+SELECT COUNT() FROM Account WHERE Name LIKE 'Onco Global - %'
+SELECT COUNT() FROM HealthcareFacility WHERE Name LIKE 'Onco Global - %'
+SELECT COUNT() FROM HealthcareProviderTaxonomy WHERE Name IN ('Medical Oncology','Surgical Oncology','Radiation Oncology','Pediatric Oncology','Gynecologic Oncology','Hemato-Oncology','Palliative Care')
+SELECT COUNT() FROM HealthcareProvider WHERE Name LIKE 'Dr. %'
+SELECT COUNT() FROM HealthcarePractitionerFacility WHERE HealthcareProvider.Name LIKE 'Dr. %'
+SELECT COUNT() FROM OperatingHours WHERE Name LIKE 'Onco OH - %'
+SELECT COUNT() FROM TimeSlot WHERE OperatingHours.Name LIKE 'Onco OH - %'
+SELECT COUNT() FROM ServiceTerritory WHERE Name LIKE 'Onco Territory - %'
+SELECT COUNT() FROM ServiceResource WHERE Name LIKE 'Dr. %'
+SELECT COUNT() FROM ServiceTerritoryMember WHERE ServiceResource.Name LIKE 'Dr. %'
+SELECT COUNT() FROM WorkTypeGroup WHERE Name LIKE 'Onco %'
+SELECT COUNT() FROM WorkType WHERE Name LIKE 'Onco %'
+SELECT COUNT() FROM ServiceAppointment WHERE Subject LIKE 'Onco seed%'
+SELECT Name FROM HealthcareFacility WHERE Name LIKE 'Onco Global - %' ORDER BY Name
+SELECT Name, (SELECT HealthcareFacility.Name FROM HealthcarePractitionerFacilities) FROM HealthcareProvider WHERE Name LIKE 'Dr. %' ORDER BY Name LIMIT 10

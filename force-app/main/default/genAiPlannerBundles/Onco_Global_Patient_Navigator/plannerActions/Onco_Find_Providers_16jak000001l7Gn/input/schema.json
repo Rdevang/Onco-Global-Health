@@ -1,0 +1,27 @@
+{
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "specialty" : {
+      "title" : "Specialty",
+      "description" : "e.g. Medical Oncology, Pediatric Oncology",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    },
+    "facilityNameContains" : {
+      "title" : "Facility Name Contains",
+      "description" : "Substring to match primary facility name",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    },
+    "city" : {
+      "title" : "City",
+      "description" : "City on facility account billing address",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

@@ -1,0 +1,5 @@
+// Phase 03 - Knowledge verification (run statements one at a time with sf data query)
+
+SELECT COUNT() FROM Knowledge__kav WHERE PublishStatus = 'Online' AND UrlName LIKE 'ka-%'
+SELECT Id, Title, UrlName, PublishStatus FROM Knowledge__kav WHERE UrlName LIKE 'ka-%' ORDER BY UrlName
+SELECT COUNT() FROM Knowledge__DataCategorySelection WHERE DataCategoryGroupName = 'Onco_Care'

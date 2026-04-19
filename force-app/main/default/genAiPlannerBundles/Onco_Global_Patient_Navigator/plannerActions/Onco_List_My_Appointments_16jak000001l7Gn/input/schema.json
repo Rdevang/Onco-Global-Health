@@ -1,0 +1,21 @@
+{
+  "required" : [ "patientAccountId" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "patientAccountId" : {
+      "title" : "Patient Account Id",
+      "description" : "Person Account Id (ParentRecordId on ServiceAppointment).",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "includePast" : {
+      "title" : "Include Past",
+      "description" : "Include past appointments",
+      "lightning:type" : "lightning__booleanType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

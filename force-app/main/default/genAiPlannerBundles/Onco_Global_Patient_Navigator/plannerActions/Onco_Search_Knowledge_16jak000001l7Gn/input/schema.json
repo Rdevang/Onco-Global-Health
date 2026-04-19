@@ -1,0 +1,14 @@
+{
+  "required" : [ "queryText" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "queryText" : {
+      "title" : "Query Text",
+      "description" : "Keywords to search Knowledge articles.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

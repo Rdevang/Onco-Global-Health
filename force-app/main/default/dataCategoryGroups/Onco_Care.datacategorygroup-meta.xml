@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataCategoryGroup xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>true</active>
+    <dataCategory>
+        <dataCategory>
+            <dataCategory>
+                <label>Medical Oncology</label>
+                <name>Medical_Oncology</name>
+            </dataCategory>
+            <dataCategory>
+                <label>Surgical Oncology</label>
+                <name>Surgical_Oncology</name>
+            </dataCategory>
+            <dataCategory>
+                <label>Radiation Oncology</label>
+                <name>Radiation_Oncology</name>
+            </dataCategory>
+            <dataCategory>
+                <label>Pediatric Oncology</label>
+                <name>Pediatric_Oncology</name>
+            </dataCategory>
+            <dataCategory>
+                <label>Gynecologic Oncology</label>
+                <name>Gynecologic_Oncology</name>
+            </dataCategory>
+            <dataCategory>
+                <label>Hemato-Oncology</label>
+                <name>Hemato_Oncology</name>
+            </dataCategory>
+            <dataCategory>
+                <label>Palliative Care</label>
+                <name>Palliative_Care</name>
+            </dataCategory>
+            <label>Specialties</label>
+            <name>Specialties</name>
+        </dataCategory>
+        <dataCategory>
+            <dataCategory>
+                <label>Counseling</label>
+                <name>Counseling</name>
+            </dataCategory>
+            <dataCategory>
+                <label>Nutrition</label>
+                <name>Nutrition</name>
+            </dataCategory>
+            <dataCategory>
+                <label>Financial Assistance</label>
+                <name>Financial_Assistance</name>
+            </dataCategory>
+            <label>Patient Support</label>
+            <name>Patient_Support</name>
+        </dataCategory>
+        <dataCategory>
+            <dataCategory>
+                <label>Visiting Hours</label>
+                <name>Visiting_Hours</name>
+            </dataCategory>
+            <dataCategory>
+                <label>Parking and Access</label>
+                <name>Parking_Access</name>
+            </dataCategory>
+            <dataCategory>
+                <label>Insurance Accepted</label>
+                <name>Insurance_Accepted</name>
+            </dataCategory>
+            <label>Facility Info</label>
+            <name>Facility_Info</name>
+        </dataCategory>
+        <dataCategory>
+            <dataCategory>
+                <label>Diagnosis</label>
+                <name>Diagnosis</name>
+            </dataCategory>
+            <dataCategory>
+                <label>Treatment Planning</label>
+                <name>Treatment_Planning</name>
+            </dataCategory>
+            <dataCategory>
+                <label>Survivorship</label>
+                <name>Survivorship</name>
+            </dataCategory>
+            <label>Treatment Journey</label>
+            <name>Treatment_Journey</name>
+        </dataCategory>
+        <label>All</label>
+        <name>All</name>
+    </dataCategory>
+    <description>Onco Global patient-facing knowledge categories for Agentforce grounding</description>
+    <label>Onco Care</label>
+    <objectUsage>
+        <object>KnowledgeArticleVersion</object>
+    </objectUsage>
