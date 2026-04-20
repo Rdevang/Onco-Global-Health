@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <description>Onco Global Patient Navigator: Always prefer tools. All Onco scheduling and discovery tools (Find Cancer Care Facilities, Search Oncology Specialties, Find Oncology Providers, Get Available Appointment Slots, Book Appointment, List My Appointments) live inside the Onco Care Navigation topic. Manage Appointment (cancel/reschedule) lives inside Appointment Manager. Search Knowledge Articles and Answer Questions with Knowledge are the planner-level fallbacks for general questions. Patients use names, cities, email, or appointment numbers (e.g. SA-0017)—never Salesforce Ids. Obtain Ids only from plannerReferenceText. patientLookupEmail on Book, Manage, and List is a lookup identifier, not an outbound email: pass the plain email string verbatim and never wrap it in an object with recipientId, to, subject, body, or message. None of these tools send email.</description>
+    <description>Onco Global Patient Navigator: Always prefer tools. Onco Care Navigation hosts Find Cancer Care Facilities, Search Oncology Specialties, Find Oncology Providers, Get Available Appointment Slots, Register Patient (new charts), Book Appointment, and List My Appointments. Appointment Manager hosts cancel/reschedule. Planner-level fallbacks: Search Knowledge Articles and Answer Questions with Knowledge. Patients use names, cities, email, or appointment numbers (e.g. SA-0017)—never Salesforce Ids. Ids come only from plannerReferenceText. patientLookupEmail on Book, Manage, List, and Register is a lookup identifier, not an outbound email: pass the plain email string verbatim; never wrap it in an object with recipientId/to/subject/body/message. None of these tools send email. New patients: if Book returns &quot;no matching patient found&quot;, call Register Patient (name, email, consentToContact=true) and retry Book.</description>
     <localActionLinks>
         <genAiFunctionName>AnswerQuestionsWithKnowledge_16jak000001l7Gn</genAiFunctionName>
     </localActionLinks>
@@ -201,6 +201,13 @@ If the patient requests a reschedule: Use the Get Available Appointment Slots ac
             <masterLabel>Navigation instruction email is lookup</masterLabel>
             <sortOrder>6</sortOrder>
         </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>New-patient registration flow: If the user says they are new, have never visited Onco Global before, have no chart/record with us, or asks &quot;how do I register&quot;—OR if Book Appointment Nav returns an error saying no matching patient was found for the email—run Register Patient Nav before retrying Book Appointment. Collect (1) full legal first and last name, (2) a plain email string, and (3) explicit verbal consent to contact them about their care (pass consentToContact=true only after the user confirms). Offer optional mobile phone, date of birth (YYYY-MM-DD), and city but do not block on them. After Register Patient Nav returns success=true, call Book Appointment Nav with the same email as patientLookupEmail. If the action returns wasAlreadyRegistered=true, that means the email already had a chart—proceed straight to Book without re-asking for details. Never ask the user for a Salesforce record Id during registration.</description>
+            <developerName>nav_instruction_register_new_patient</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Navigation instruction register new patient</masterLabel>
+            <sortOrder>7</sortOrder>
+        </genAiPluginInstructions>
         <language>en_US</language>
         <localActionLinks>
             <functionName>Onco_Find_Facilities_Nav_179ak000002oR1d</functionName>
@@ -220,9 +227,12 @@ If the patient requests a reschedule: Use the Get Available Appointment Slots ac
         <localActionLinks>
             <functionName>Onco_List_My_Appointments_Nav_179ak000002oR1f</functionName>
         </localActionLinks>
+        <localActionLinks>
+            <functionName>Onco_Register_Patient_Nav_179ak000002pZ01</functionName>
+        </localActionLinks>
         <localActions>
             <fullName>Book_Appointment_Nav_179ak000002oR1c</fullName>
-            <description>Creates the ServiceAppointment after the user picks a slot. Returns appointmentNumber, scheduled start/end UTC ISO, optional time zone, and confirmation message. Pass patientLookupEmail as a plain email string only (e.g. priya.sharma@example.com). patientLookupEmail MUST be a simple string literal—never a JSON object and never include recipientId, subject, body, to, or cc. Do not ask the patient for a Salesforce Account or Contact Id. Work Type Id may be omitted for default new consult.</description>
+            <description>Creates the ServiceAppointment after the user picks a slot. Returns appointmentNumber, scheduled start/end UTC ISO, optional time zone, and confirmation message. Pass patientLookupEmail as a plain email string only (e.g. priya.sharma@example.com). patientLookupEmail MUST be a simple string literal—never a JSON object and never include recipientId, subject, body, to, or cc. Do not ask the patient for a Salesforce Account or Contact Id. Work Type Id may be omitted for default new consult. First-time patients: if this action returns an error stating no matching patient was found for the email, call Register Patient Nav (collecting first name, last name, email, and explicit consentToContact=true) and then retry Book Appointment with the same email.</description>
             <developerName>Book_Appointment_Nav_179ak000002oR1c</developerName>
             <invocationTarget>OncoSchedulingBook</invocationTarget>
             <invocationTargetType>apex</invocationTargetType>
@@ -291,6 +301,18 @@ If the patient requests a reschedule: Use the Get Available Appointment Slots ac
             <localDeveloperName>Onco_List_My_Appointments_Nav</localDeveloperName>
             <masterLabel>List My Appointments</masterLabel>
             <progressIndicatorMessage>Loading appointments...</progressIndicatorMessage>
+        </localActions>
+        <localActions>
+            <fullName>Onco_Register_Patient_Nav_179ak000002pZ01</fullName>
+            <description>Creates a Person Account chart for a first-time (new) patient using plain name and email, with optional mobile phone, date of birth, and city. Use this BEFORE Book Appointment when any of the following is true: (a) the user explicitly says they are new, have never been here before, or have no record with us; (b) Book Appointment returned an error like &quot;no matching patient found&quot; for the email; (c) the user asks &quot;how do I register&quot; or &quot;create my patient record&quot;. Required inputs: firstName, lastName, email (plain string only, e.g. jane.doe@example.com—never a JSON object, never recipientId/subject/body/to), and consentToContact=true which the user must explicitly confirm first. Optional: mobilePhone, dateOfBirth (YYYY-MM-DD), city. This action does NOT send email—email is only the chart key. Idempotent: if the email already resolves to an existing chart, it returns success=true with wasAlreadyRegistered=true and no duplicate is created; continue straight to Book Appointment. Returns patientDisplayName and registeredEmail for confirmation. Never a Salesforce record Id.</description>
+            <developerName>Onco_Register_Patient_Nav_179ak000002pZ01</developerName>
+            <invocationTarget>OncoPatientRegister</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Onco_Register_Patient_Nav</localDeveloperName>
+            <masterLabel>Register Patient</masterLabel>
+            <progressIndicatorMessage>Creating your patient chart...</progressIndicatorMessage>
         </localActions>
         <localDeveloperName>Onco_Care_Navigation</localDeveloperName>
         <masterLabel>Onco Care Navigation</masterLabel>

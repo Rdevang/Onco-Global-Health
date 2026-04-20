@@ -1,0 +1,56 @@
+{
+  "required" : [ "firstName", "lastName", "email", "consentToContact" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "firstName" : {
+      "title" : "First name",
+      "description" : "Patient legal first name. Collected from the user in plain text. Required.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : true,
+      "copilotAction:isUserInput" : true
+    },
+    "lastName" : {
+      "title" : "Last name",
+      "description" : "Patient legal last name. Collected from the user in plain text. Required.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : true,
+      "copilotAction:isUserInput" : true
+    },
+    "email" : {
+      "title" : "Email (chart key)",
+      "description" : "Plain email string the user typed (e.g. jane.doe@example.com). Used as the Person Account chart key only. This action does NOT send email. Never wrap in a JSON object, never include recipientId, to, subject, body, or message. Required.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : true,
+      "copilotAction:isUserInput" : true
+    },
+    "mobilePhone" : {
+      "title" : "Mobile phone (optional)",
+      "description" : "Plain phone number string the user shared (e.g. +14155550100). Optional.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : true,
+      "copilotAction:isUserInput" : true
+    },
+    "dateOfBirth" : {
+      "title" : "Date of birth (YYYY-MM-DD, optional)",
+      "description" : "ISO date the user shared (e.g. 1988-05-04). Optional but recommended for identity matching.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : true,
+      "copilotAction:isUserInput" : true
+    },
+    "city" : {
+      "title" : "City (optional)",
+      "description" : "Patient mailing city. Optional.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    },
+    "consentToContact" : {
+      "title" : "Consent to contact",
+      "description" : "Set to true only after the patient explicitly confirms they consent to being contacted about appointments and care. Do not default to true without confirmation.",
+      "lightning:type" : "lightning__booleanType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}
