@@ -105,42 +105,79 @@ public with sharing class OncoDiscoveryProviders {
 
         Set<Id> inCity = null;
         if (city != null) {
-            String cityLike = '%' + city + '%';
+            // Build a forgiving city filter: try the full string plus each 3+ char token.
+            // Match on Account.BillingCity (e.g. "Mumbai") OR HealthcareFacility.Name
+            // (e.g. "Onco Global - Mumbai Andheri") so planner inputs like
+            // "Mumbai hospitals", "Mumbai, India", or "Mumbai Andheri" still resolve.
+            Set<String> tokens = new Set<String>();
+            tokens.add(city);
+            for (String w : city.split('[\\s,/;]+')) {
+                String w2 = w == null ? '' : w.replaceAll('[.,;:()]', '').trim();
+                if (w2.length() >= 3) {
+                    tokens.add(w2);
+                }
+            }
             inCity = new Set<Id>();
-            for (HealthcarePractitionerFacility hpf : [
-                SELECT HealthcareProviderId
-                FROM HealthcarePractitionerFacility
-                WHERE IsActive = true AND HealthcareFacility.Account.BillingCity LIKE :cityLike
-            ]) {
-                inCity.add(hpf.HealthcareProviderId);
+            for (String tok : tokens) {
+                String likePattern = '%' + tok + '%';
+                for (HealthcarePractitionerFacility hpf : [
+                    SELECT HealthcareProviderId
+                    FROM HealthcarePractitionerFacility
+                    WHERE
+                        IsActive = true
+                        AND (
+                            HealthcareFacility.Account.BillingCity LIKE :likePattern
+                            OR HealthcareFacility.Name LIKE :likePattern
+                        )
+                ]) {
+                    inCity.add(hpf.HealthcareProviderId);
+                }
             }
         }
 
         List<HealthcareProvider> rows;
         if (spec != null) {
-            String likeSpec = '%' + spec + '%';
-            Set<Id> bySpecialty = new Set<Id>();
-            for (HealthcareProvider hpTitle : [
-                SELECT Id
-                FROM HealthcareProvider
-                WHERE Name LIKE 'Dr.%' AND Practitioner.Title LIKE :likeSpec
-            ]) {
-                bySpecialty.add(hpTitle.Id);
+            // Planner often passes long paraphrases ("oncologists specializing in Medical Oncology").
+            // Build a token set: full string plus each clinically-meaningful word so LIKE can hit
+            // Practitioner.Title / CareSpecialty.Name on any substring.
+            Set<String> specialtyTokens = new Set<String>();
+            specialtyTokens.add(spec);
+            Set<String> stopwords = new Set<String>{
+                'who', 'the', 'for', 'and', 'with', 'doctor', 'doctors', 'dr',
+                'specialist', 'specialists', 'specializing', 'specialty',
+                'department', 'care', 'in', 'at', 'of', 'an', 'any'
+            };
+            for (String w : spec.split('\\s+')) {
+                String w2 = w == null ? '' : w.replaceAll('[.,;:()]', '').trim();
+                if (w2.length() >= 4 && !stopwords.contains(w2.toLowerCase())) {
+                    specialtyTokens.add(w2);
+                }
             }
+            Set<Id> bySpecialty = new Set<Id>();
             Set<Id> contactIdsFromCareSpecialty = new Set<Id>();
-            for (HealthcareProviderSpecialty hps : [
-                SELECT PractitionerId
-                FROM HealthcareProviderSpecialty
-                WHERE
-                    IsActive = true
-                    AND PractitionerId != null
-                    AND SpecialtyId IN (
-                        SELECT Id
-                        FROM CareSpecialty
-                        WHERE Name LIKE :likeSpec
-                    )
-            ]) {
-                contactIdsFromCareSpecialty.add(hps.PractitionerId);
+            for (String tok : specialtyTokens) {
+                String likeSpec = '%' + tok + '%';
+                for (HealthcareProvider hpTitle : [
+                    SELECT Id
+                    FROM HealthcareProvider
+                    WHERE Name LIKE 'Dr.%' AND Practitioner.Title LIKE :likeSpec
+                ]) {
+                    bySpecialty.add(hpTitle.Id);
+                }
+                for (HealthcareProviderSpecialty hps : [
+                    SELECT PractitionerId
+                    FROM HealthcareProviderSpecialty
+                    WHERE
+                        IsActive = true
+                        AND PractitionerId != null
+                        AND SpecialtyId IN (
+                            SELECT Id
+                            FROM CareSpecialty
+                            WHERE Name LIKE :likeSpec
+                        )
+                ]) {
+                    contactIdsFromCareSpecialty.add(hps.PractitionerId);
+                }
             }
             if (!contactIdsFromCareSpecialty.isEmpty()) {
                 for (HealthcareProvider hpCs : [
