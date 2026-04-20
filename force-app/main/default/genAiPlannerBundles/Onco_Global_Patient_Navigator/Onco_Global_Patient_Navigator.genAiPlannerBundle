@@ -5,11 +5,75 @@
         <genAiFunctionName>AnswerQuestionsWithKnowledge_16jak000001l7Gn</genAiFunctionName>
     </localActionLinks>
     <localTopicLinks>
-        <genAiPluginName>Onco_Care_Navigation_16jak000001l7Gn</genAiPluginName>
-    </localTopicLinks>
-    <localTopicLinks>
         <genAiPluginName>Onco_Appointment_Manager_16jak000001l7Gn</genAiPluginName>
     </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Onco_Care_Navigation_16jak000001l7Gn</genAiPluginName>
+    </localTopicLinks>
+    <localTopics>
+        <fullName>Onco_Appointment_Manager_16jak000001l7Gn</fullName>
+        <canEscalate>false</canEscalate>
+        <description>ONLY when the user wants to cancel, reschedule, or otherwise modify an already-scheduled ServiceAppointment, or needs hands-on management of an existing booking. Uses Health Cloud data. NOT for finding a new specialist by city/specialty, facility discovery, or first-time new-visit booking workflow—classify those as Onco_Care_Navigation.</description>
+        <developerName>Onco_Appointment_Manager_16jak000001l7Gn</developerName>
+        <genAiPluginInstructions>
+            <description>You are the Onco Appointment Manager subagent. Your responsibility is to handle changes to existing patient appointments with efficiency and empathy.
+Authentication: Before accessing or changing any appointment, always ask for and confirm the patient&apos;s full name and email on file (and phone if your channel uses it). Patients will not provide Salesforce record Ids—never ask for Account, Contact, or ServiceAppointment Ids. If name or email is missing, request both before proceeding.
+Privacy: Do not paste Salesforce record Ids in user-facing messages; use appointment numbers (e.g. SA-0017), dates, and provider or facility names when confirming details.</description>
+            <developerName>instruction_1</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Instruction 1</masterLabel>
+            <sortOrder>0</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>If the patient requests a cancellation: Confirm the appointment details, ask for the reason for cancellation (for reporting purposes), and confirm the cancellation action.
+If the patient requests a reschedule: Use the Get Available Appointment Slots action (after facility, provider or Care Specialty, and work type are known from discovery) to find alternative slots before finalizing the change. Never clear an existing appointment until a new slot is confirmed.</description>
+            <developerName>instruction_2</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Instruction 2</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>If the appointment is within 24 hours, do not perform self-service modification. Politely inform the patient that due to the short notice, they must speak with a human contact center agent, and provide the contact center hotline number.</description>
+            <developerName>instruction_3</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Instruction 3</masterLabel>
+            <sortOrder>2</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Oncology patients may be experiencing significant stress. Always validate their request calmly, use gentle language, and avoid technical jargon.</description>
+            <developerName>instruction_4</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Instruction 4</masterLabel>
+            <sortOrder>3</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>If a patient asks for medical advice, diagnosis, or medication guidance, do not answer—offer human escalation. For hospital billing or non-Onco topics, offer to connect a human. Facility location and specialist discovery are handled by the main navigator tools; do not block those.</description>
+            <developerName>instruction_5</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Instruction 5</masterLabel>
+            <sortOrder>4</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Manage_Appointment_179ak000002oR0f</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Manage_Appointment_179ak000002oR0f</fullName>
+            <description>Use this action to cancel or reschedule a confirmed booking. Required inputs are the patient&apos;s appointment number (e.g. SA-0017) and patientLookupEmail as a plain email string only (e.g. priya.sharma@example.com). patientLookupEmail MUST be a simple string literal—never a JSON object and never include recipientId, subject, body, to, or cc. Do not pass Salesforce record Ids. You must check the 24-hour guardrail rule (via the Apex logic) before proceeding. Do not use this for general inquiries.</description>
+            <developerName>Manage_Appointment_179ak000002oR0f</developerName>
+            <invocationTarget>OncoAppointmentManager</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Manage_Appointment</localDeveloperName>
+            <masterLabel>Manage Appointment</masterLabel>
+            <progressIndicatorMessage>Updating your appointment details in our system...</progressIndicatorMessage>
+        </localActions>
+        <localDeveloperName>Onco_Appointment_Manager</localDeveloperName>
+        <masterLabel>Onco Appointment Manager</masterLabel>
+        <pluginType>Topic</pluginType>
+        <scope>Authorized for ServiceAppointment and AssignedResource changes for existing bookings only. Medical advice and billing disputes go to a human.</scope>
+    </localTopics>
     <localTopics>
         <fullName>Onco_Care_Navigation_16jak000001l7Gn</fullName>
         <canEscalate>false</canEscalate>
@@ -71,28 +135,16 @@
             <functionName>Book_Appointment_Nav_179ak000002oR1c</functionName>
         </localActionLinks>
         <localActions>
-            <fullName>Onco_Find_Facilities_Nav_179ak000002oR1d</fullName>
-            <description>Lists Onco Global facilities: patient-safe names and cities in facilitiesText; HealthcareFacility Ids appear only in plannerReferenceText for your next tools. Call before Get Available Appointment Slots when the user names a city, region, or hospital name.</description>
-            <developerName>Onco_Find_Facilities_Nav_179ak000002oR1d</developerName>
-            <invocationTarget>OncoDiscoveryFacilitiesAgent</invocationTarget>
+            <fullName>Book_Appointment_Nav_179ak000002oR1c</fullName>
+            <description>Creates the ServiceAppointment after the user picks a slot. Returns appointmentNumber, scheduled start/end UTC ISO, optional time zone, and confirmation message. Pass patientLookupEmail as a plain email string only (e.g. priya.sharma@example.com). patientLookupEmail MUST be a simple string literal—never a JSON object and never include recipientId, subject, body, to, or cc. Do not ask the patient for a Salesforce Account or Contact Id. Work Type Id may be omitted for default new consult.</description>
+            <developerName>Book_Appointment_Nav_179ak000002oR1c</developerName>
+            <invocationTarget>OncoSchedulingBook</invocationTarget>
             <invocationTargetType>apex</invocationTargetType>
             <isConfirmationRequired>false</isConfirmationRequired>
             <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-            <localDeveloperName>Onco_Find_Facilities_Nav</localDeveloperName>
-            <masterLabel>Find Cancer Care Facilities</masterLabel>
-            <progressIndicatorMessage>Searching Onco facilities...</progressIndicatorMessage>
-        </localActions>
-        <localActions>
-            <fullName>Onco_Find_Providers_Nav_179ak000002oR1a</fullName>
-            <description>Finds doctors: patient-safe names in providersText; HealthcareProvider Ids only in plannerReferenceText for Get Slots and Book. Pass city, specialty text, or facility name substring from the user.</description>
-            <developerName>Onco_Find_Providers_Nav_179ak000002oR1a</developerName>
-            <invocationTarget>OncoDiscoveryProvidersAgent</invocationTarget>
-            <invocationTargetType>apex</invocationTargetType>
-            <isConfirmationRequired>false</isConfirmationRequired>
-            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-            <localDeveloperName>Onco_Find_Providers_Nav</localDeveloperName>
-            <masterLabel>Find Oncology Providers</masterLabel>
-            <progressIndicatorMessage>Searching providers...</progressIndicatorMessage>
+            <localDeveloperName>Book_Appointment_Nav</localDeveloperName>
+            <masterLabel>Book Appointment</masterLabel>
+            <progressIndicatorMessage>Finalizing your oncology consultation...</progressIndicatorMessage>
         </localActions>
         <localActions>
             <fullName>Onco_Get_Slots_Nav_179ak000002oR1b</fullName>
@@ -107,85 +159,33 @@
             <progressIndicatorMessage>Computing slots...</progressIndicatorMessage>
         </localActions>
         <localActions>
-            <fullName>Book_Appointment_Nav_179ak000002oR1c</fullName>
-            <description>Creates the ServiceAppointment after the user picks a slot. Returns appointmentNumber, scheduled start/end UTC ISO, optional time zone, and confirmation message. Pass patientLookupEmail as the plain email the patient confirmed—do not ask them for a Salesforce Account or Contact Id (demo: priya.sharma@example.com). Work Type Id may be omitted for default new consult.</description>
-            <developerName>Book_Appointment_Nav_179ak000002oR1c</developerName>
-            <invocationTarget>OncoSchedulingBook</invocationTarget>
+            <fullName>Onco_Find_Providers_Nav_179ak000002oR1a</fullName>
+            <description>Finds doctors: patient-safe names in providersText; HealthcareProvider Ids only in plannerReferenceText for Get Slots and Book. Pass city, specialty text, or facility name substring from the user.</description>
+            <developerName>Onco_Find_Providers_Nav_179ak000002oR1a</developerName>
+            <invocationTarget>OncoDiscoveryProvidersAgent</invocationTarget>
             <invocationTargetType>apex</invocationTargetType>
             <isConfirmationRequired>false</isConfirmationRequired>
             <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-            <localDeveloperName>Book_Appointment_Nav</localDeveloperName>
-            <masterLabel>Book Appointment</masterLabel>
-            <progressIndicatorMessage>Finalizing your oncology consultation...</progressIndicatorMessage>
+            <localDeveloperName>Onco_Find_Providers_Nav</localDeveloperName>
+            <masterLabel>Find Oncology Providers</masterLabel>
+            <progressIndicatorMessage>Searching providers...</progressIndicatorMessage>
+        </localActions>
+        <localActions>
+            <fullName>Onco_Find_Facilities_Nav_179ak000002oR1d</fullName>
+            <description>Lists Onco Global facilities: patient-safe names and cities in facilitiesText; HealthcareFacility Ids appear only in plannerReferenceText for your next tools. Call before Get Available Appointment Slots when the user names a city, region, or hospital name.</description>
+            <developerName>Onco_Find_Facilities_Nav_179ak000002oR1d</developerName>
+            <invocationTarget>OncoDiscoveryFacilitiesAgent</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Onco_Find_Facilities_Nav</localDeveloperName>
+            <masterLabel>Find Cancer Care Facilities</masterLabel>
+            <progressIndicatorMessage>Searching Onco facilities...</progressIndicatorMessage>
         </localActions>
         <localDeveloperName>Onco_Care_Navigation</localDeveloperName>
         <masterLabel>Onco Care Navigation</masterLabel>
         <pluginType>Topic</pluginType>
         <scope>Discovery, education, slot exploration, and new visit booking (including Book Appointment). Cancel/reschedule of an existing confirmed visit uses the Appointment Manager topic.</scope>
-    </localTopics>
-    <localTopics>
-        <fullName>Onco_Appointment_Manager_16jak000001l7Gn</fullName>
-        <canEscalate>false</canEscalate>
-        <description>ONLY when the user wants to cancel, reschedule, or otherwise modify an already-scheduled ServiceAppointment, or needs hands-on management of an existing booking. Uses Health Cloud data. NOT for finding a new specialist by city/specialty, facility discovery, or first-time new-visit booking workflow—classify those as Onco_Care_Navigation.</description>
-        <developerName>Onco_Appointment_Manager_16jak000001l7Gn</developerName>
-        <genAiPluginInstructions>
-            <description>You are the Onco Appointment Manager subagent. Your responsibility is to handle changes to existing patient appointments with efficiency and empathy.
-Authentication: Before accessing or changing any appointment, always ask for and confirm the patient&apos;s full name and email on file (and phone if your channel uses it). Patients will not provide Salesforce record Ids—never ask for Account, Contact, or ServiceAppointment Ids. If name or email is missing, request both before proceeding.
-Privacy: Do not paste Salesforce record Ids in user-facing messages; use appointment numbers (e.g. SA-0017), dates, and provider or facility names when confirming details.</description>
-            <developerName>instruction_1</developerName>
-            <language xsi:nil="true"/>
-            <masterLabel>Instruction 1</masterLabel>
-            <sortOrder>0</sortOrder>
-        </genAiPluginInstructions>
-        <genAiPluginInstructions>
-            <description>If the patient requests a cancellation: Confirm the appointment details, ask for the reason for cancellation (for reporting purposes), and confirm the cancellation action.
-If the patient requests a reschedule: Use the Get Available Appointment Slots action (after facility, provider or Care Specialty, and work type are known from discovery) to find alternative slots before finalizing the change. Never clear an existing appointment until a new slot is confirmed.</description>
-            <developerName>instruction_2</developerName>
-            <language xsi:nil="true"/>
-            <masterLabel>Instruction 2</masterLabel>
-            <sortOrder>1</sortOrder>
-        </genAiPluginInstructions>
-        <genAiPluginInstructions>
-            <description>If the appointment is within 24 hours, do not perform self-service modification. Politely inform the patient that due to the short notice, they must speak with a human contact center agent, and provide the contact center hotline number.</description>
-            <developerName>instruction_3</developerName>
-            <language xsi:nil="true"/>
-            <masterLabel>Instruction 3</masterLabel>
-            <sortOrder>2</sortOrder>
-        </genAiPluginInstructions>
-        <genAiPluginInstructions>
-            <description>Oncology patients may be experiencing significant stress. Always validate their request calmly, use gentle language, and avoid technical jargon.</description>
-            <developerName>instruction_4</developerName>
-            <language xsi:nil="true"/>
-            <masterLabel>Instruction 4</masterLabel>
-            <sortOrder>3</sortOrder>
-        </genAiPluginInstructions>
-        <genAiPluginInstructions>
-            <description>If a patient asks for medical advice, diagnosis, or medication guidance, do not answer—offer human escalation. For hospital billing or non-Onco topics, offer to connect a human. Facility location and specialist discovery are handled by the main navigator tools; do not block those.</description>
-            <developerName>instruction_5</developerName>
-            <language xsi:nil="true"/>
-            <masterLabel>Instruction 5</masterLabel>
-            <sortOrder>4</sortOrder>
-        </genAiPluginInstructions>
-        <language>en_US</language>
-        <localActionLinks>
-            <functionName>Manage_Appointment_179ak000002oR0f</functionName>
-        </localActionLinks>
-        <localActions>
-            <fullName>Manage_Appointment_179ak000002oR0f</fullName>
-            <description>Use this action to cancel or reschedule a confirmed booking. Required inputs are the patient&apos;s appointment number (e.g. SA-0017) and patientLookupEmail (plain email). Do not pass Salesforce record Ids. You must check the 24-hour guardrail rule (via the Apex logic) before proceeding. Do not use this for general inquiries.</description>
-            <developerName>Manage_Appointment_179ak000002oR0f</developerName>
-            <invocationTarget>OncoAppointmentManager</invocationTarget>
-            <invocationTargetType>apex</invocationTargetType>
-            <isConfirmationRequired>false</isConfirmationRequired>
-            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-            <localDeveloperName>Manage_Appointment</localDeveloperName>
-            <masterLabel>Manage Appointment</masterLabel>
-            <progressIndicatorMessage>Updating your appointment details in our system...</progressIndicatorMessage>
-        </localActions>
-        <localDeveloperName>Onco_Appointment_Manager</localDeveloperName>
-        <masterLabel>Onco Appointment Manager</masterLabel>
-        <pluginType>Topic</pluginType>
-        <scope>Authorized for ServiceAppointment and AssignedResource changes for existing bookings only. Medical advice and billing disputes go to a human.</scope>
     </localTopics>
     <masterLabel>Onco Global Patient Navigator</masterLabel>
     <plannerActions>
@@ -202,28 +202,28 @@ If the patient requests a reschedule: Use the Get Available Appointment Slots ac
         <source>EmployeeCopilot__AnswerQuestionsWithKnowledge</source>
     </plannerActions>
     <plannerActions>
-        <fullName>Onco_Find_Facilities_16jak000001l7Gn</fullName>
-        <description>Lists Onco Global hospitals and clinics. Use whenever the user mentions a city, region, or asks where facilities are located.</description>
-        <developerName>Onco_Find_Facilities_16jak000001l7Gn</developerName>
-        <invocationTarget>OncoDiscoveryFacilitiesAgent</invocationTarget>
+        <fullName>Onco_Search_Knowledge_16jak000001l7Gn</fullName>
+        <description>Keyword search in published Knowledge articles (SOSL). Use alongside the standard Knowledge retriever for synonyms.</description>
+        <developerName>Onco_Search_Knowledge_16jak000001l7Gn</developerName>
+        <invocationTarget>OncoKnowledgeSearchAgent</invocationTarget>
         <invocationTargetType>apex</invocationTargetType>
         <isConfirmationRequired>false</isConfirmationRequired>
         <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-        <localDeveloperName>Onco_Find_Facilities</localDeveloperName>
-        <masterLabel>Find Cancer Care Facilities</masterLabel>
-        <progressIndicatorMessage>Searching Onco facilities...</progressIndicatorMessage>
+        <localDeveloperName>Onco_Search_Knowledge</localDeveloperName>
+        <masterLabel>Search Knowledge Articles</masterLabel>
+        <progressIndicatorMessage>Searching articles...</progressIndicatorMessage>
     </plannerActions>
     <plannerActions>
-        <fullName>Onco_Find_Providers_16jak000001l7Gn</fullName>
-        <description>Finds doctors (HealthcareProvider). Pass city, specialty text, or facility name substring from the user.</description>
-        <developerName>Onco_Find_Providers_16jak000001l7Gn</developerName>
-        <invocationTarget>OncoDiscoveryProvidersAgent</invocationTarget>
+        <fullName>Onco_List_My_Appointments_16jak000001l7Gn</fullName>
+        <description>Lists visits for the patient identified by patientLookupEmail. Pass patientLookupEmail as a plain email string only (e.g. priya.sharma@example.com). patientLookupEmail MUST be a simple string literal—never a JSON object and never include recipientId, subject, body, to, or cc. Do not pass a Salesforce Account Id.</description>
+        <developerName>Onco_List_My_Appointments_16jak000001l7Gn</developerName>
+        <invocationTarget>OncoListAppointmentsAgent</invocationTarget>
         <invocationTargetType>apex</invocationTargetType>
         <isConfirmationRequired>false</isConfirmationRequired>
         <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-        <localDeveloperName>Onco_Find_Providers</localDeveloperName>
-        <masterLabel>Find Oncology Providers</masterLabel>
-        <progressIndicatorMessage>Searching providers...</progressIndicatorMessage>
+        <localDeveloperName>Onco_List_My_Appointments</localDeveloperName>
+        <masterLabel>List My Appointments</masterLabel>
+        <progressIndicatorMessage>Loading appointments...</progressIndicatorMessage>
     </plannerActions>
     <plannerActions>
         <fullName>Onco_Search_Specialties_16jak000001l7Gn</fullName>
@@ -250,28 +250,28 @@ If the patient requests a reschedule: Use the Get Available Appointment Slots ac
         <progressIndicatorMessage>Computing slots...</progressIndicatorMessage>
     </plannerActions>
     <plannerActions>
-        <fullName>Onco_Search_Knowledge_16jak000001l7Gn</fullName>
-        <description>Keyword search in published Knowledge articles (SOSL). Use alongside the standard Knowledge retriever for synonyms.</description>
-        <developerName>Onco_Search_Knowledge_16jak000001l7Gn</developerName>
-        <invocationTarget>OncoKnowledgeSearchAgent</invocationTarget>
+        <fullName>Onco_Find_Facilities_16jak000001l7Gn</fullName>
+        <description>Lists Onco Global hospitals and clinics. Use whenever the user mentions a city, region, or asks where facilities are located.</description>
+        <developerName>Onco_Find_Facilities_16jak000001l7Gn</developerName>
+        <invocationTarget>OncoDiscoveryFacilitiesAgent</invocationTarget>
         <invocationTargetType>apex</invocationTargetType>
         <isConfirmationRequired>false</isConfirmationRequired>
         <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-        <localDeveloperName>Onco_Search_Knowledge</localDeveloperName>
-        <masterLabel>Search Knowledge Articles</masterLabel>
-        <progressIndicatorMessage>Searching articles...</progressIndicatorMessage>
+        <localDeveloperName>Onco_Find_Facilities</localDeveloperName>
+        <masterLabel>Find Cancer Care Facilities</masterLabel>
+        <progressIndicatorMessage>Searching Onco facilities...</progressIndicatorMessage>
     </plannerActions>
     <plannerActions>
-        <fullName>Onco_List_My_Appointments_16jak000001l7Gn</fullName>
-        <description>Lists visits for the patient identified by patientLookupEmail (plain email on file). Do not pass a Salesforce Account Id.</description>
-        <developerName>Onco_List_My_Appointments_16jak000001l7Gn</developerName>
-        <invocationTarget>OncoListAppointmentsAgent</invocationTarget>
+        <fullName>Onco_Find_Providers_16jak000001l7Gn</fullName>
+        <description>Finds doctors (HealthcareProvider). Pass city, specialty text, or facility name substring from the user.</description>
+        <developerName>Onco_Find_Providers_16jak000001l7Gn</developerName>
+        <invocationTarget>OncoDiscoveryProvidersAgent</invocationTarget>
         <invocationTargetType>apex</invocationTargetType>
         <isConfirmationRequired>false</isConfirmationRequired>
         <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-        <localDeveloperName>Onco_List_My_Appointments</localDeveloperName>
-        <masterLabel>List My Appointments</masterLabel>
-        <progressIndicatorMessage>Loading appointments...</progressIndicatorMessage>
+        <localDeveloperName>Onco_Find_Providers</localDeveloperName>
+        <masterLabel>Find Oncology Providers</masterLabel>
+        <progressIndicatorMessage>Searching providers...</progressIndicatorMessage>
     </plannerActions>
     <plannerSurfaces>
         <adaptiveResponseAllowed>true</adaptiveResponseAllowed>

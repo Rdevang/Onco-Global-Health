@@ -4,8 +4,8 @@
   "properties" : {
     "patientLookupEmail" : {
       "title" : "Patient lookup email",
-      "description" : "Single Person Account email the patient confirmed (e.g. meera.iyer@example.com). Do not pass Account or Contact Ids.",
-      "lightning:type" : "lightning__emailType",
+      "description" : "Plain email address string only (e.g. meera.iyer@example.com). Pass the raw email as a simple string. Do NOT wrap it in an object and do NOT include recipientId, subject, body, to, cc, or any other fields. Not a Salesforce Account or Contact Id.",
+      "lightning:type" : "lightning__textType",
       "lightning:isPII" : true,
       "copilotAction:isUserInput" : false
     },
