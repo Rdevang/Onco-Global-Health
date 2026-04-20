@@ -7,6 +7,20 @@
       "lightning:type" : "lightning__textType",
       "lightning:isPII" : false,
       "copilotAction:isUserInput" : true
+    },
+    "healthcareFacilityId" : {
+      "title" : "Healthcare Facility Id (optional)",
+      "description" : "When the user asks what specialties are offered at a specific facility (e.g. \"what departments at Onco Global - Bengaluru HSR\"), pass the HealthcareFacility Id obtained from Find Cancer Care Facilities plannerReferenceText. Results will be scoped to specialties actually staffed by active practitioners at that facility. Do not accept a facility Id from the user.",
+      "lightning:type" : "lightning__recordIdType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "facilityName" : {
+      "title" : "Facility Name (optional)",
+      "description" : "If you do not yet have a HealthcareFacility Id, pass a distinctive name substring the user typed (e.g. \"HSR\" or \"Bengaluru Whitefield\"). Used only when it resolves to exactly one facility; otherwise the tool falls back to the global catalog. Prefer passing healthcareFacilityId when available.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
     }
   },
   "lightning:type" : "lightning__objectType"
