@@ -132,6 +132,80 @@ private class OncoDiscoverySpecialtiesTest {
     }
 
     @IsTest
+    static void agentFacade_searchTextMissAtFacility_listsWhatIsOffered() {
+        HealthcareFacility fac = [SELECT Id, Name FROM HealthcareFacility WHERE Name = 'Test Onco Facility Alpha' LIMIT 1];
+        OncoDiscoverySpecialtiesAgent.AgentRequest a = new OncoDiscoverySpecialtiesAgent.AgentRequest();
+        a.healthcareFacilityId = fac.Id;
+        a.searchText = 'Test Surgical Oncology'; // mapped only to the unrelated practitioner, NOT at this facility
+
+        List<OncoDiscoverySpecialtiesAgent.AgentResult> out =
+            OncoDiscoverySpecialtiesAgent.searchSpecialtiesForAgent(
+                new List<OncoDiscoverySpecialtiesAgent.AgentRequest>{ a }
+            );
+
+        System.assertEquals(true, out[0].success);
+        System.assert(out[0].message.contains('"Test Surgical Oncology" is not currently available at'),
+            'Message should name the missing specialty: ' + out[0].message);
+        System.assert(out[0].message.contains('Test Onco Facility Alpha'),
+            'Message should name the facility: ' + out[0].message);
+        System.assert(
+            out[0].message.contains('Test Medical Oncology')
+                && out[0].message.contains('Test Radiation Oncology'),
+            'Message should list the specialties actually offered at the facility: ' + out[0].message
+        );
+    }
+
+    @IsTest
+    static void agentFacade_resolvedFacilityButNoStaffing_doesNotFalseNegative() {
+        // Facility exists but has no practitioners mapped -> tool returns empty rows
+        // but we must NOT tell the planner "facility does not exist".
+        Account emptyAcct = new Account(Name = 'Empty Onco Facility Account');
+        insert emptyAcct;
+        HealthcareFacility emptyFac = new HealthcareFacility(
+            Name = 'Empty Onco Facility ZZZ',
+            AccountId = emptyAcct.Id
+        );
+        insert emptyFac;
+
+        OncoDiscoverySpecialtiesAgent.AgentRequest a = new OncoDiscoverySpecialtiesAgent.AgentRequest();
+        a.healthcareFacilityId = emptyFac.Id;
+
+        List<OncoDiscoverySpecialtiesAgent.AgentResult> out =
+            OncoDiscoverySpecialtiesAgent.searchSpecialtiesForAgent(
+                new List<OncoDiscoverySpecialtiesAgent.AgentRequest>{ a }
+            );
+
+        System.assertEquals(true, out[0].success);
+        System.assert(out[0].message.contains('Empty Onco Facility ZZZ'),
+            'Message should cite the resolved facility name: ' + out[0].message);
+        System.assert(
+            out[0].message.contains('No active specialties are currently staffed'),
+            'Message should signal empty staffing, not missing facility: ' + out[0].message
+        );
+        System.assert(
+            !out[0].message.contains('Could not find'),
+            'Must NOT claim facility is missing when it resolved: ' + out[0].message
+        );
+    }
+
+    @IsTest
+    static void agentFacade_unresolvedFacilityIsCalledOut() {
+        OncoDiscoverySpecialtiesAgent.AgentRequest a = new OncoDiscoverySpecialtiesAgent.AgentRequest();
+        a.facilityName = 'Facility That Definitely Does Not Exist XYZ';
+
+        List<OncoDiscoverySpecialtiesAgent.AgentResult> out =
+            OncoDiscoverySpecialtiesAgent.searchSpecialtiesForAgent(
+                new List<OncoDiscoverySpecialtiesAgent.AgentRequest>{ a }
+            );
+
+        System.assertEquals(true, out[0].success);
+        System.assert(out[0].message.contains('Could not find a facility'),
+            'Message should signal unresolved facility: ' + out[0].message);
+        System.assert(out[0].message.contains('Facility That Definitely Does Not Exist XYZ'),
+            'Message should echo the unresolved name: ' + out[0].message);
+    }
+
+    @IsTest
     static void agentFacade_scopedMessageMentionsFacility() {
         HealthcareFacility fac = [SELECT Id, Name FROM HealthcareFacility WHERE Name = 'Test Onco Facility Alpha' LIMIT 1];
         OncoDiscoverySpecialtiesAgent.AgentRequest a = new OncoDiscoverySpecialtiesAgent.AgentRequest();

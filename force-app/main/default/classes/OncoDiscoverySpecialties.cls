@@ -83,30 +83,38 @@ public without sharing class OncoDiscoverySpecialties {
             if (practitionerIds.isEmpty()) {
                 return new List<List<SpecialtyRow>>{ out };
             }
-            String likeVal = String.isNotBlank(q) ? '%' + q + '%' : null;
-            List<HealthcareProviderSpecialty> hpsRows;
-            if (likeVal != null) {
-                hpsRows = [
+            List<String> likeCandidates = buildLikeCandidates(q);
+            Map<Id, HealthcareProviderSpecialty> hpsById = new Map<Id, HealthcareProviderSpecialty>();
+            if (likeCandidates.isEmpty()) {
+                for (HealthcareProviderSpecialty hps : [
                     SELECT SpecialtyId, Specialty.Name, Specialty.SpecialtyCode, Specialty.SpecialtyType,
                            IsPrimarySpecialty
                     FROM HealthcareProviderSpecialty
                     WHERE IsActive = TRUE
                       AND PractitionerId IN :practitionerIds
-                      AND Specialty.Name LIKE :likeVal
                     ORDER BY Specialty.Name
                     LIMIT 200
-                ];
+                ]) {
+                    hpsById.put(hps.Id, hps);
+                }
             } else {
-                hpsRows = [
-                    SELECT SpecialtyId, Specialty.Name, Specialty.SpecialtyCode, Specialty.SpecialtyType,
-                           IsPrimarySpecialty
-                    FROM HealthcareProviderSpecialty
-                    WHERE IsActive = TRUE
-                      AND PractitionerId IN :practitionerIds
-                    ORDER BY Specialty.Name
-                    LIMIT 200
-                ];
+                for (String likeVal : likeCandidates) {
+                    for (HealthcareProviderSpecialty hps : [
+                        SELECT SpecialtyId, Specialty.Name, Specialty.SpecialtyCode, Specialty.SpecialtyType,
+                               IsPrimarySpecialty
+                        FROM HealthcareProviderSpecialty
+                        WHERE IsActive = TRUE
+                          AND PractitionerId IN :practitionerIds
+                          AND Specialty.Name LIKE :likeVal
+                        ORDER BY Specialty.Name
+                        LIMIT 200
+                    ]) {
+                        hpsById.put(hps.Id, hps);
+                    }
+                }
             }
+            List<HealthcareProviderSpecialty> hpsRows = new List<HealthcareProviderSpecialty>(hpsById.values());
+            hpsRows.sort(new HpsByNameComparator());
             for (HealthcareProviderSpecialty hps : hpsRows) {
                 if (hps == null || hps.Specialty == null || String.isBlank(hps.Specialty.Name)) continue;
                 String key = hps.Specialty.Name.toLowerCase();
@@ -126,7 +134,7 @@ public without sharing class OncoDiscoverySpecialties {
             return new List<List<SpecialtyRow>>{ out };
         }
 
-        List<CareSpecialty> careRows;
+        List<CareSpecialty> careRows = new List<CareSpecialty>();
         if (String.isBlank(q)) {
             careRows = [
                 SELECT Id, Name, SpecialtyCode, SpecialtyType
@@ -135,14 +143,20 @@ public without sharing class OncoDiscoverySpecialties {
                 LIMIT 50
             ];
         } else {
-            String likeVal = '%' + q + '%';
-            careRows = [
-                SELECT Id, Name, SpecialtyCode, SpecialtyType
-                FROM CareSpecialty
-                WHERE Name LIKE :likeVal
-                ORDER BY Name
-                LIMIT 50
-            ];
+            Map<Id, CareSpecialty> careById = new Map<Id, CareSpecialty>();
+            for (String likeVal : buildLikeCandidates(q)) {
+                for (CareSpecialty cs : [
+                    SELECT Id, Name, SpecialtyCode, SpecialtyType
+                    FROM CareSpecialty
+                    WHERE Name LIKE :likeVal
+                    ORDER BY Name
+                    LIMIT 50
+                ]) {
+                    careById.put(cs.Id, cs);
+                }
+            }
+            careRows = new List<CareSpecialty>(careById.values());
+            careRows.sort(new CareSpecialtyByNameComparator());
         }
         for (CareSpecialty cs : careRows) {
             if (cs == null || String.isBlank(cs.Name)) {
@@ -163,7 +177,7 @@ public without sharing class OncoDiscoverySpecialties {
             out.add(s);
         }
 
-        List<HealthcareProviderTaxonomy> taxRows;
+        List<HealthcareProviderTaxonomy> taxRows = new List<HealthcareProviderTaxonomy>();
         if (String.isBlank(q)) {
             taxRows = [
                 SELECT Name
@@ -172,14 +186,20 @@ public without sharing class OncoDiscoverySpecialties {
                 LIMIT 50
             ];
         } else {
-            String likeVal = '%' + q + '%';
-            taxRows = [
-                SELECT Name
-                FROM HealthcareProviderTaxonomy
-                WHERE Name LIKE :likeVal
-                ORDER BY Name
-                LIMIT 50
-            ];
+            Map<Id, HealthcareProviderTaxonomy> taxById = new Map<Id, HealthcareProviderTaxonomy>();
+            for (String likeVal : buildLikeCandidates(q)) {
+                for (HealthcareProviderTaxonomy t : [
+                    SELECT Id, Name
+                    FROM HealthcareProviderTaxonomy
+                    WHERE Name LIKE :likeVal
+                    ORDER BY Name
+                    LIMIT 50
+                ]) {
+                    taxById.put(t.Id, t);
+                }
+            }
+            taxRows = new List<HealthcareProviderTaxonomy>(taxById.values());
+            taxRows.sort(new TaxByNameComparator());
         }
         for (HealthcareProviderTaxonomy t : taxRows) {
             if (t == null || String.isBlank(t.Name)) {
@@ -197,5 +217,86 @@ public without sharing class OncoDiscoverySpecialties {
         }
 
         return new List<List<SpecialtyRow>>{ out };
+    }
+
+    /**
+     * Builds one or more LIKE patterns for a user-supplied search term, accounting for common
+     * British/American spelling variants so queries like &quot;paediatric oncology&quot; still match
+     * a CareSpecialty stored as &quot;Pediatric Oncology&quot; (and vice versa). Returns an empty list
+     * when the input is blank.
+     */
+    @TestVisible
+    private static List<String> buildLikeCandidates(String raw) {
+        List<String> out = new List<String>();
+        if (String.isBlank(raw)) return out;
+        String trimmed = raw.trim();
+        Set<String> variants = new Set<String>();
+        variants.add(trimmed);
+        // Bidirectional spelling swaps. Apply both directions on each pass.
+        Map<String, String> brToAm = new Map<String, String>{
+            'paediatric' => 'pediatric',
+            'paediatrics' => 'pediatrics',
+            'oesophageal' => 'esophageal',
+            'haematology' => 'hematology',
+            'haemato' => 'hemato',
+            'haematological' => 'hematological',
+            'gynaecology' => 'gynecology',
+            'gynaecologic' => 'gynecologic',
+            'gynae' => 'gyn',
+            'orthopaedic' => 'orthopedic',
+            'anaesthesia' => 'anesthesia',
+            'tumour' => 'tumor',
+            'foetal' => 'fetal',
+            'oestrogen' => 'estrogen'
+        };
+        List<String> toInspect = new List<String>(variants);
+        for (String v : toInspect) {
+            String lower = v.toLowerCase();
+            for (String br : brToAm.keySet()) {
+                String am = brToAm.get(br);
+                if (lower.contains(br)) {
+                    variants.add(replaceCaseInsensitive(v, br, am));
+                }
+                if (lower.contains(am)) {
+                    variants.add(replaceCaseInsensitive(v, am, br));
+                }
+            }
+        }
+        for (String v : variants) {
+            if (String.isNotBlank(v)) {
+                out.add('%' + v + '%');
+            }
+        }
+        return out;
+    }
+
+    private static String replaceCaseInsensitive(String input, String needle, String replacement) {
+        if (String.isBlank(input) || String.isBlank(needle)) return input;
+        // Needles and replacements in this class are plain alphabetic words, so no regex escaping is required.
+        return input.replaceAll('(?i)' + needle, replacement);
+    }
+
+    public class HpsByNameComparator implements System.Comparator<HealthcareProviderSpecialty> {
+        public Integer compare(HealthcareProviderSpecialty a, HealthcareProviderSpecialty b) {
+            String an = (a != null && a.Specialty != null && a.Specialty.Name != null) ? a.Specialty.Name : '';
+            String bn = (b != null && b.Specialty != null && b.Specialty.Name != null) ? b.Specialty.Name : '';
+            return an.compareTo(bn);
+        }
+    }
+
+    public class CareSpecialtyByNameComparator implements System.Comparator<CareSpecialty> {
+        public Integer compare(CareSpecialty a, CareSpecialty b) {
+            String an = (a != null && a.Name != null) ? a.Name : '';
+            String bn = (b != null && b.Name != null) ? b.Name : '';
+            return an.compareTo(bn);
+        }
+    }
+
+    public class TaxByNameComparator implements System.Comparator<HealthcareProviderTaxonomy> {
+        public Integer compare(HealthcareProviderTaxonomy a, HealthcareProviderTaxonomy b) {
+            String an = (a != null && a.Name != null) ? a.Name : '';
+            String bn = (b != null && b.Name != null) ? b.Name : '';
+            return an.compareTo(bn);
+        }
     }
 }
