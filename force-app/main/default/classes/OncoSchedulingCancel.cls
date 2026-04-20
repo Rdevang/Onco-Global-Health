@@ -1,4 +1,4 @@
-public with sharing class OncoSchedulingCancel {
+public without sharing class OncoSchedulingCancel {
     public class CancelRequest {
         @InvocableVariable(required=true label='Service Appointment Id')
         public String serviceAppointmentId;

@@ -3,7 +3,7 @@
  * Delegates to Phase 04 OncoSchedulingCancel / OncoSchedulingReschedule.
  * Callers identify the booking by human appointment number and patient email—no Salesforce record Ids from the user.
  */
-public with sharing class OncoAppointmentManager {
+public without sharing class OncoAppointmentManager {
     public class ManageRequest {
         @InvocableVariable(label = 'Action Type' description = 'Use Cancel or Reschedule.')
         public String actionType;

@@ -1,4 +1,4 @@
-public with sharing class OncoSchedulingBook {
+public without sharing class OncoSchedulingBook {
     private static final String DEFAULT_WORK_TYPE_NAME = 'Onco New Consult';
 
     public class BookAppointmentRequest {

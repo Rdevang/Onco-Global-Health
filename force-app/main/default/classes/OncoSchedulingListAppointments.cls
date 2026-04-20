@@ -1,4 +1,4 @@
-public with sharing class OncoSchedulingListAppointments {
+public without sharing class OncoSchedulingListAppointments {
     public class ListApptsRequest {
         @InvocableVariable(
             required = true

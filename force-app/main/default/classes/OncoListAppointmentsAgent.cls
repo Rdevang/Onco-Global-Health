@@ -1,7 +1,7 @@
 /**
  * Text output for Agentforce planner; wraps OncoSchedulingListAppointments.getMyAppointments.
  */
-public with sharing class OncoListAppointmentsAgent {
+public without sharing class OncoListAppointmentsAgent {
     public class AgentRequest {
         @InvocableVariable(
             required = true
