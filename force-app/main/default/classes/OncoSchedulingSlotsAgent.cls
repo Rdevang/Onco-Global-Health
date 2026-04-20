@@ -74,8 +74,7 @@ public with sharing class OncoSchedulingSlotsAgent {
         Boolean hasProv = String.isNotBlank(ar.healthcareProviderId);
         Boolean hasSpec = String.isNotBlank(ar.careSpecialtyId);
         if (String.isBlank(ar.healthcareFacilityId) || String.isBlank(wtId) || (!hasProv && !hasSpec) || (hasProv && hasSpec)) {
-            r.message =
-                'Facility Id and Work Type (or default Onco New Consult) are required. Pass either Healthcare Provider Id or Care Specialty Id—not both, not neither.';
+            r.message = 'Facility Id and Work Type (or default Onco New Consult) are required. Pass either Healthcare Provider Id or Care Specialty Id—not both, not neither.';
             return new List<AgentResult>{ r };
         }
         try {

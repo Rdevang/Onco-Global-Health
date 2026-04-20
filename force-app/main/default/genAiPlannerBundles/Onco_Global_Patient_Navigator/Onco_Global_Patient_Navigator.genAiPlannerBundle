@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <description>Onco Global Patient Navigator: Always prefer tools. Use Find Cancer Care Facilities, Search Oncology Specialties (department-first), Find Oncology Providers, Search Knowledge Articles, Get Available Appointment Slots and Book Appointment on Onco Care Navigation, List My Appointments, Answer Questions with Knowledge, and Manage Appointment on Appointment Manager for cancel/reschedule. Patients use names, cities, email, or appointment numbers (e.g. SA-0017)—never Salesforce Ids. Obtain Ids only from plannerReferenceText. patientLookupEmail on Book, Manage, and List is a lookup identifier, not an outbound email: pass the plain email string verbatim and never wrap it in an object with recipientId, to, subject, body, or message. None of these tools send email.</description>
+    <description>Onco Global Patient Navigator: Always prefer tools. All Onco scheduling and discovery tools (Find Cancer Care Facilities, Search Oncology Specialties, Find Oncology Providers, Get Available Appointment Slots, Book Appointment, List My Appointments) live inside the Onco Care Navigation topic. Manage Appointment (cancel/reschedule) lives inside Appointment Manager. Search Knowledge Articles and Answer Questions with Knowledge are the planner-level fallbacks for general questions. Patients use names, cities, email, or appointment numbers (e.g. SA-0017)—never Salesforce Ids. Obtain Ids only from plannerReferenceText. patientLookupEmail on Book, Manage, and List is a lookup identifier, not an outbound email: pass the plain email string verbatim and never wrap it in an object with recipientId, to, subject, body, or message. None of these tools send email.</description>
     <localActionLinks>
         <genAiFunctionName>AnswerQuestionsWithKnowledge_16jak000001l7Gn</genAiFunctionName>
     </localActionLinks>
@@ -153,7 +153,7 @@ If the patient requests a reschedule: Use the Get Available Appointment Slots ac
         <description>Use this subagent when the user wants to find an oncology specialist or consultant by city or specialty (for example medical oncology in Bengaluru), find hospitals or centers in a region, list oncology specialties, discover available appointment slots, list their appointments for information, or start booking a new visit. This is on-topic for this agent—do not classify these requests as Off_Topic.</description>
         <developerName>Onco_Care_Navigation_16jak000001l7Gn</developerName>
         <genAiPluginInstructions>
-            <description>You are the main Onco Global navigator. Prefer topic actions on this plugin first: Find Cancer Care Facilities Nav (city), Find Oncology Providers Nav (specialty/city/facility), Get Available Appointment Slots Nav, Book Appointment Nav. Also use planner actions Search Oncology Specialties, Search Knowledge Articles, List My Appointments, Answer Questions with Knowledge. The user will not supply Salesforce record Ids—only names, cities, phone numbers, email, or human-readable appointment references (for example SA-0017). Never ask the patient for an Id; resolve HealthcareFacility, HealthcareProvider, and CareSpecialty Ids only from prior tool plannerReferenceText in this conversation. For slots, pass either HealthcareProvider Id from Find Oncology Providers plannerReferenceText (named doctor) or CareSpecialty Id from Search Oncology Specialties plannerReferenceText (department or specialty first). For Book, use the HealthcareProvider Id from Get Available Appointment Slots plannerReferenceText for the slot the patient chose (per-slot line). Never use patient-facing facilitiesText, providersText, or specialtiesText for Ids; never invent Ids.</description>
+            <description>You are the main Onco Global navigator. All scheduling and discovery tools on this topic are topic-local and you must use them directly: Find Cancer Care Facilities (city/hospital), Search Oncology Specialties (department/specialty catalog), Find Oncology Providers (doctor by name/city/specialty/facility), Get Available Appointment Slots, Book Appointment, List My Appointments. For general education questions, fall back to the planner-level Search Knowledge Articles and Answer Questions with Knowledge. The user will not supply Salesforce record Ids—only names, cities, phone numbers, email, or human-readable appointment references (for example SA-0017). Never ask the patient for an Id; resolve HealthcareFacility, HealthcareProvider, and CareSpecialty Ids only from prior tool plannerReferenceText in this conversation. For slots, pass either HealthcareProvider Id from Find Oncology Providers plannerReferenceText (named doctor) or CareSpecialty Id from Search Oncology Specialties plannerReferenceText (department or specialty first). For Book, use the HealthcareProvider Id from Get Available Appointment Slots plannerReferenceText for the slot the patient chose (per-slot line). Never use patient-facing facilitiesText, providersText, or specialtiesText for Ids; never invent Ids.</description>
             <developerName>nav_instruction_1</developerName>
             <language xsi:nil="true"/>
             <masterLabel>Navigation instruction 1</masterLabel>
@@ -322,66 +322,6 @@ If the patient requests a reschedule: Use the Get Available Appointment Slots ac
         <localDeveloperName>Onco_Search_Knowledge</localDeveloperName>
         <masterLabel>Search Knowledge Articles</masterLabel>
         <progressIndicatorMessage>Searching articles...</progressIndicatorMessage>
-    </plannerActions>
-    <plannerActions>
-        <fullName>Onco_List_My_Appointments_16jak000001l7Gn</fullName>
-        <description>Lists visits for the patient identified by patientLookupEmail. Pass patientLookupEmail as a plain email string only (e.g. priya.sharma@example.com). patientLookupEmail MUST be a simple string literal—never a JSON object and never include recipientId, subject, body, to, or cc. Do not pass a Salesforce Account Id.</description>
-        <developerName>Onco_List_My_Appointments_16jak000001l7Gn</developerName>
-        <invocationTarget>OncoListAppointmentsAgent</invocationTarget>
-        <invocationTargetType>apex</invocationTargetType>
-        <isConfirmationRequired>false</isConfirmationRequired>
-        <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-        <localDeveloperName>Onco_List_My_Appointments</localDeveloperName>
-        <masterLabel>List My Appointments</masterLabel>
-        <progressIndicatorMessage>Loading appointments...</progressIndicatorMessage>
-    </plannerActions>
-    <plannerActions>
-        <fullName>Onco_Search_Specialties_16jak000001l7Gn</fullName>
-        <description>Lists oncology specialty programs / departments. ALWAYS call this tool when the user asks any of the following or similar: &quot;what specialties / departments do you offer&quot;, &quot;what kinds of cancer care do you have&quot;, &quot;do you have a paediatric / gynae / radiation / surgical / medical oncology department&quot;, &quot;list your oncology programs&quot;, &quot;browse by department&quot;, or before a department-first booking. Do not answer these from memory—run this action. Returns patient-safe names in specialtiesText and CareSpecialty Ids in plannerReferenceText for Get Available Appointment Slots (department-first) and follow-on tools.</description>
-        <developerName>Onco_Search_Specialties_16jak000001l7Gn</developerName>
-        <invocationTarget>OncoDiscoverySpecialtiesAgent</invocationTarget>
-        <invocationTargetType>apex</invocationTargetType>
-        <isConfirmationRequired>false</isConfirmationRequired>
-        <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-        <localDeveloperName>Onco_Search_Specialties</localDeveloperName>
-        <masterLabel>Search Oncology Specialties</masterLabel>
-        <progressIndicatorMessage>Loading specialties...</progressIndicatorMessage>
-    </plannerActions>
-    <plannerActions>
-        <fullName>Onco_Get_Available_Slots_16jak000001l7Gn</fullName>
-        <description>Returns candidate booking times. REQUIRED INPUTS: HealthcareFacility Id AND either HealthcareProvider Id or CareSpecialty Id (never both). You MUST acquire these Ids from prerequisite tools—do NOT guess or fabricate Ids. Department-first flow (&quot;slots for &lt;specialty&gt; in &lt;city&gt;&quot;): call Find Cancer Care Facilities first for the HealthcareFacility Id, then Search Oncology Specialties for the CareSpecialty Id, then this action. Named-doctor flow (&quot;slots with Dr. X&quot;): call Find Cancer Care Facilities for the HealthcareFacility Id, then Find Oncology Providers for the HealthcareProvider Id, then this action. Work Type Id may be omitted (defaults to Onco New Consult). Returns slotsText for the patient and per-slot HealthcareProvider Ids in plannerReferenceText for Book.</description>
-        <developerName>Onco_Get_Available_Slots_16jak000001l7Gn</developerName>
-        <invocationTarget>OncoSchedulingSlotsAgent</invocationTarget>
-        <invocationTargetType>apex</invocationTargetType>
-        <isConfirmationRequired>false</isConfirmationRequired>
-        <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-        <localDeveloperName>Onco_Get_Available_Slots</localDeveloperName>
-        <masterLabel>Get Available Appointment Slots</masterLabel>
-        <progressIndicatorMessage>Computing slots...</progressIndicatorMessage>
-    </plannerActions>
-    <plannerActions>
-        <fullName>Onco_Find_Facilities_16jak000001l7Gn</fullName>
-        <description>Lists Onco Global hospitals and clinics. Use whenever the user mentions a city, region, or asks where facilities are located.</description>
-        <developerName>Onco_Find_Facilities_16jak000001l7Gn</developerName>
-        <invocationTarget>OncoDiscoveryFacilitiesAgent</invocationTarget>
-        <invocationTargetType>apex</invocationTargetType>
-        <isConfirmationRequired>false</isConfirmationRequired>
-        <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-        <localDeveloperName>Onco_Find_Facilities</localDeveloperName>
-        <masterLabel>Find Cancer Care Facilities</masterLabel>
-        <progressIndicatorMessage>Searching Onco facilities...</progressIndicatorMessage>
-    </plannerActions>
-    <plannerActions>
-        <fullName>Onco_Find_Providers_16jak000001l7Gn</fullName>
-        <description>Finds oncology doctors (HealthcareProvider). ALWAYS call this tool when the user asks any of the following or similar: &quot;find a doctor&quot;, &quot;who are the oncologists in &lt;city&gt;&quot;, &quot;who treats &lt;cancer type&gt;&quot;, &quot;list surgical / medical / radiation / paediatric / gynae oncologists at &lt;facility&gt;&quot;, &quot;show me doctors for &lt;specialty&gt;&quot;, or mentions a doctor by name (&quot;Dr. Arjun Mehta&quot;, &quot;book with Dr. Sunita Verma&quot;). Do not claim no doctors exist without running this tool. Pass any of: city, specialty text, facility name substring, or provider name substring from the user message. Returns patient-safe names in providersText and HealthcareProvider Ids in plannerReferenceText.</description>
-        <developerName>Onco_Find_Providers_16jak000001l7Gn</developerName>
-        <invocationTarget>OncoDiscoveryProvidersAgent</invocationTarget>
-        <invocationTargetType>apex</invocationTargetType>
-        <isConfirmationRequired>false</isConfirmationRequired>
-        <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-        <localDeveloperName>Onco_Find_Providers</localDeveloperName>
-        <masterLabel>Find Oncology Providers</masterLabel>
-        <progressIndicatorMessage>Searching providers...</progressIndicatorMessage>
     </plannerActions>
     <plannerSurfaces>
         <adaptiveResponseAllowed>true</adaptiveResponseAllowed>

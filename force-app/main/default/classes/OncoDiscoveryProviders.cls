@@ -1,4 +1,4 @@
-public with sharing class OncoDiscoveryProviders {
+public without sharing class OncoDiscoveryProviders {
     /** Strip trailing parenthetical notes so LIKE matches CareSpecialty/Title (e.g. "Medical Oncology (new consult)"). */
     private static String normalizeSpecialtyToken(String raw) {
         if (String.isBlank(raw)) {

@@ -1,4 +1,4 @@
-public with sharing class OncoSchedulingGetSlots {
+public without sharing class OncoSchedulingGetSlots {
     public class GetSlotsRequest {
         @InvocableVariable(required = true label = 'Healthcare Facility Id')
         public String healthcareFacilityId;
