@@ -36,7 +36,7 @@ public with sharing class OncoSchedulingListAppointments {
             wrap.add(new List<AppointmentRow>());
             return wrap;
         }
-        Boolean past = req.includePast == true;
+        Boolean past = req.includePast == null ? true : req.includePast;
         Datetime now = System.now();
         List<ServiceAppointment> rows;
         if (past) {

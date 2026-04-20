@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <description>Onco Global Patient Navigator: Always prefer tools. Use Find Cancer Care Facilities (city), Search Oncology Specialties (department-first slots via discovery), Find Oncology Providers (specialty/city), Search Knowledge Articles (keywords), Get Available Appointment Slots and Book Appointment on the Onco Care Navigation topic, List My Appointments (patientLookupEmail), Answer Questions with Knowledge (retriever), and Manage Appointment on the Appointment Manager topic for cancel/reschedule. Patients use names, locations, phone, email, or appointment numbers—not Salesforce record Ids. Never guess Ids; obtain them only from tool outputs (plannerReferenceText).</description>
+    <description>Onco Global Patient Navigator: Always prefer tools. Use Find Cancer Care Facilities, Search Oncology Specialties (department-first), Find Oncology Providers, Search Knowledge Articles, Get Available Appointment Slots and Book Appointment on Onco Care Navigation, List My Appointments, Answer Questions with Knowledge, and Manage Appointment on Appointment Manager for cancel/reschedule. Patients use names, cities, email, or appointment numbers (e.g. SA-0017)—never Salesforce Ids. Obtain Ids only from plannerReferenceText. patientLookupEmail on Book, Manage, and List is a lookup identifier, not an outbound email: pass the plain email string verbatim and never wrap it in an object with recipientId, to, subject, body, or message. None of these tools send email.</description>
     <localActionLinks>
         <genAiFunctionName>AnswerQuestionsWithKnowledge_16jak000001l7Gn</genAiFunctionName>
     </localActionLinks>
@@ -119,6 +119,13 @@ If the patient requests a reschedule: Use the Get Available Appointment Slots ac
             <masterLabel>Instruction 5</masterLabel>
             <sortOrder>4</sortOrder>
         </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>patientLookupEmail is a LOOKUP IDENTIFIER, not an outbound email. Manage Appointment does NOT send email; it only reads and updates ServiceAppointment records. When you invoke Manage_Appointment, pass patientLookupEmail as the user&apos;s plain email address string verbatim (for example priya.sharma@example.com). Never wrap it in a JSON object, a Map, or any structure. Never construct or include recipientId, recipient, to, cc, bcc, from, subject, body, or message. If you find yourself composing an email, stop and pass only the plain email address.</description>
+            <developerName>instruction_6_email_is_lookup</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Instruction 6 email is lookup</masterLabel>
+            <sortOrder>5</sortOrder>
+        </genAiPluginInstructions>
         <language>en_US</language>
         <localActionLinks>
             <functionName>Manage_Appointment_179ak000002oR0f</functionName>
@@ -187,6 +194,13 @@ If the patient requests a reschedule: Use the Get Available Appointment Slots ac
             <masterLabel>Navigation instruction no record ids</masterLabel>
             <sortOrder>5</sortOrder>
         </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>patientLookupEmail is a LOOKUP IDENTIFIER, not an outbound email. Book Appointment Nav and List My Appointments do NOT send email; they use the email only to find the patient record. When you invoke Book_Appointment_Nav or Onco_List_My_Appointments, pass patientLookupEmail as the user&apos;s plain email address string verbatim (for example priya.sharma@example.com). Never wrap it in a JSON object, a Map, or any structure. Never construct or include recipientId, recipient, to, cc, bcc, from, subject, body, or message. If you find yourself composing an email, stop and pass only the plain email address.</description>
+            <developerName>nav_instruction_email_is_lookup</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Navigation instruction email is lookup</masterLabel>
+            <sortOrder>6</sortOrder>
+        </genAiPluginInstructions>
         <language>en_US</language>
         <localActionLinks>
             <functionName>Onco_Find_Facilities_Nav_179ak000002oR1d</functionName>
@@ -199,6 +213,12 @@ If the patient requests a reschedule: Use the Get Available Appointment Slots ac
         </localActionLinks>
         <localActionLinks>
             <functionName>Book_Appointment_Nav_179ak000002oR1c</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Onco_Search_Specialties_Nav_179ak000002oR1e</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Onco_List_My_Appointments_Nav_179ak000002oR1f</functionName>
         </localActionLinks>
         <localActions>
             <fullName>Book_Appointment_Nav_179ak000002oR1c</fullName>
@@ -226,7 +246,7 @@ If the patient requests a reschedule: Use the Get Available Appointment Slots ac
         </localActions>
         <localActions>
             <fullName>Onco_Find_Providers_Nav_179ak000002oR1a</fullName>
-            <description>Finds doctors: patient-safe names in providersText; HealthcareProvider Ids only in plannerReferenceText for Get Slots and Book. Pass city, specialty text, or facility name substring from the user.</description>
+            <description>Finds oncology doctors. ALWAYS call this tool when the user asks any of: &quot;find a doctor&quot;, &quot;who treats &lt;cancer&gt;&quot;, &quot;oncologist at &lt;hospital&gt;&quot;, &quot;list &lt;specialty&gt; doctors in &lt;city&gt;&quot;, or mentions a doctor by name (e.g. &quot;Dr. Arjun Mehta&quot;, &quot;book with Dr. Priyanka Nair&quot;). Do not say there are no doctors without running this tool. Pass any of: city, specialty text, facility name substring, or provider name substring from the user message. Returns patient-safe names in providersText and HealthcareProvider Ids in plannerReferenceText for Get Slots and Book.</description>
             <developerName>Onco_Find_Providers_Nav_179ak000002oR1a</developerName>
             <invocationTarget>OncoDiscoveryProvidersAgent</invocationTarget>
             <invocationTargetType>apex</invocationTargetType>
@@ -247,6 +267,30 @@ If the patient requests a reschedule: Use the Get Available Appointment Slots ac
             <localDeveloperName>Onco_Find_Facilities_Nav</localDeveloperName>
             <masterLabel>Find Cancer Care Facilities</masterLabel>
             <progressIndicatorMessage>Searching Onco facilities...</progressIndicatorMessage>
+        </localActions>
+        <localActions>
+            <fullName>Onco_Search_Specialties_Nav_179ak000002oR1e</fullName>
+            <description>Lists oncology specialty programs / departments. ALWAYS call this tool when the user asks any of: &quot;what specialties / departments do you offer&quot;, &quot;what kinds of cancer care do you have&quot;, &quot;do you have a paediatric / gynae / radiation / surgical / medical oncology department&quot;, &quot;list your oncology programs&quot;, &quot;browse by department&quot;, or before department-first booking. Do not answer these from memory—run this action. Returns patient-safe names in specialtiesText and CareSpecialty Ids in plannerReferenceText for Get Available Appointment Slots (department-first) and follow-on tools.</description>
+            <developerName>Onco_Search_Specialties_Nav_179ak000002oR1e</developerName>
+            <invocationTarget>OncoDiscoverySpecialtiesAgent</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Onco_Search_Specialties_Nav</localDeveloperName>
+            <masterLabel>Search Oncology Specialties</masterLabel>
+            <progressIndicatorMessage>Loading specialties...</progressIndicatorMessage>
+        </localActions>
+        <localActions>
+            <fullName>Onco_List_My_Appointments_Nav_179ak000002oR1f</fullName>
+            <description>Lists a patient&apos;s Onco Global visits (past and upcoming) from Health Cloud. ALWAYS call this tool when the user asks any of: &quot;list my appointments&quot;, &quot;show me my appointments&quot;, &quot;what appointments do I have&quot;, &quot;when is my next visit&quot;, &quot;all my bookings&quot;. Pass patientLookupEmail as the user&apos;s plain email address string verbatim (for example priya.sharma@example.com); never wrap it in a JSON object. Default includePast to true unless the user explicitly says &quot;only upcoming&quot;. Returns patient-safe appointment numbers (e.g. SA-0017), start times, status, visit type, and territory in appointmentsText. Never a Salesforce Account Id.</description>
+            <developerName>Onco_List_My_Appointments_Nav_179ak000002oR1f</developerName>
+            <invocationTarget>OncoListAppointmentsAgent</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Onco_List_My_Appointments_Nav</localDeveloperName>
+            <masterLabel>List My Appointments</masterLabel>
+            <progressIndicatorMessage>Loading appointments...</progressIndicatorMessage>
         </localActions>
         <localDeveloperName>Onco_Care_Navigation</localDeveloperName>
         <masterLabel>Onco Care Navigation</masterLabel>
@@ -293,7 +337,7 @@ If the patient requests a reschedule: Use the Get Available Appointment Slots ac
     </plannerActions>
     <plannerActions>
         <fullName>Onco_Search_Specialties_16jak000001l7Gn</fullName>
-        <description>Lists oncology specialty programs; patient-safe names in specialtiesText and CareSpecialty Ids in plannerReferenceText for Get Available Appointment Slots (department-first) and follow-on tools. Use when the user asks what kinds of cancer care you offer or browses by department before picking a doctor.</description>
+        <description>Lists oncology specialty programs / departments. ALWAYS call this tool when the user asks any of the following or similar: &quot;what specialties / departments do you offer&quot;, &quot;what kinds of cancer care do you have&quot;, &quot;do you have a paediatric / gynae / radiation / surgical / medical oncology department&quot;, &quot;list your oncology programs&quot;, &quot;browse by department&quot;, or before a department-first booking. Do not answer these from memory—run this action. Returns patient-safe names in specialtiesText and CareSpecialty Ids in plannerReferenceText for Get Available Appointment Slots (department-first) and follow-on tools.</description>
         <developerName>Onco_Search_Specialties_16jak000001l7Gn</developerName>
         <invocationTarget>OncoDiscoverySpecialtiesAgent</invocationTarget>
         <invocationTargetType>apex</invocationTargetType>
@@ -329,7 +373,7 @@ If the patient requests a reschedule: Use the Get Available Appointment Slots ac
     </plannerActions>
     <plannerActions>
         <fullName>Onco_Find_Providers_16jak000001l7Gn</fullName>
-        <description>Finds doctors (HealthcareProvider). Pass city, specialty text, or facility name substring from the user.</description>
+        <description>Finds oncology doctors (HealthcareProvider). ALWAYS call this tool when the user asks any of the following or similar: &quot;find a doctor&quot;, &quot;who are the oncologists in &lt;city&gt;&quot;, &quot;who treats &lt;cancer type&gt;&quot;, &quot;list surgical / medical / radiation / paediatric / gynae oncologists at &lt;facility&gt;&quot;, &quot;show me doctors for &lt;specialty&gt;&quot;, or mentions a doctor by name (&quot;Dr. Arjun Mehta&quot;, &quot;book with Dr. Sunita Verma&quot;). Do not claim no doctors exist without running this tool. Pass any of: city, specialty text, facility name substring, or provider name substring from the user message. Returns patient-safe names in providersText and HealthcareProvider Ids in plannerReferenceText.</description>
         <developerName>Onco_Find_Providers_16jak000001l7Gn</developerName>
         <invocationTarget>OncoDiscoveryProvidersAgent</invocationTarget>
         <invocationTargetType>apex</invocationTargetType>

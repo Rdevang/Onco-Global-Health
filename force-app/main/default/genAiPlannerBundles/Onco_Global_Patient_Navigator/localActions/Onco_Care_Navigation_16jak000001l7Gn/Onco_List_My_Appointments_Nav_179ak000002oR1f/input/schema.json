@@ -11,7 +11,7 @@
     },
     "includePast" : {
       "title" : "Include Past",
-      "description" : "Whether to include completed or cancelled visits alongside upcoming ones. Pass true by default and when the user says &quot;all my appointments&quot;, &quot;my appointments&quot;, &quot;upcoming and past&quot;, &quot;list everything&quot;, or does not specify a time scope. Pass false only when the user explicitly asks for &quot;only upcoming&quot; or &quot;future only&quot;. If omitted, the action defaults to true (includes past).",
+      "description" : "Whether to include completed or cancelled visits alongside upcoming ones. Pass true by default and when the user says \"all my appointments\", \"my appointments\", \"upcoming and past\", \"list everything\", or does not specify a time scope. Pass false only when the user explicitly asks for \"only upcoming\" or \"future only\". If omitted, the action defaults to true.",
       "lightning:type" : "lightning__booleanType",
       "lightning:isPII" : false,
       "copilotAction:isUserInput" : false

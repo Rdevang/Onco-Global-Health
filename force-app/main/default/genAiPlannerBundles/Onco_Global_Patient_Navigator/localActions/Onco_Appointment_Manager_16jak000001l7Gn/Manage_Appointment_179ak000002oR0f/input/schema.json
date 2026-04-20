@@ -17,8 +17,8 @@
       "copilotAction:isUserInput" : false
     },
     "patientLookupEmail" : {
-      "title" : "Patient lookup email",
-      "description" : "Plain email address string only (e.g. priya.sharma@example.com). Pass the raw email as a simple string. Do NOT wrap it in an object and do NOT include recipientId, subject, body, to, cc, or any other fields. Not a Salesforce record Id.",
+      "title" : "Patient email address (lookup identifier)",
+      "description" : "The patient's email address used only as a lookup key to find their Person Account and Contact. This is NOT an outbound email message and this action does NOT send email. Pass a single plain email address string in the form name@example.com (for example priya.sharma@example.com). Do NOT pass a JSON object, a Map, or any wrapper. Do NOT include recipientId, recipient, to, cc, bcc, from, subject, body, or message. Do NOT construct an email payload of any kind. If the user provided their email earlier in the conversation, copy that plain string verbatim. Never a Salesforce record Id.",
       "lightning:type" : "lightning__textType",
       "lightning:isPII" : true,
       "copilotAction:isUserInput" : false
