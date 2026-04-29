@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "b17d5c16-4f1e-43a9-8f0f-fd6e6492cabe",
+        "isContentSafe": true,
+        "message": "Yes, we do have a Pediatric Oncology department. Let me know if you'd like more information or assistance with booking an appointment!",
+        "id": "e5256000-46db-497d-8a79-22acce0326b5",
+        "metrics": {},
+        "planId": "b17d5c16-4f1e-43a9-8f0f-fd6e6492cabe",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

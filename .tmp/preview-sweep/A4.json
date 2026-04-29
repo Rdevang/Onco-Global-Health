@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "cdb9f588-9f9e-4984-9d56-11fc6343e192",
+        "isContentSafe": true,
+        "message": "It seems there are no Onco Global facilities specifically listed in Whitefield. Could you confirm if you're referring to a different location or provide more details?",
+        "id": "e82ffcc7-c634-4a83-8e67-e85cfe25d633",
+        "metrics": {},
+        "planId": "cdb9f588-9f9e-4984-9d56-11fc6343e192",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

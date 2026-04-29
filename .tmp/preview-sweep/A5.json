@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "6eebf79f-6250-4ab6-b953-9ecb493ba8a8",
+        "isContentSafe": true,
+        "message": "It seems that Pediatric Oncology is not currently available at Onco Global - Bengaluru HSR. Let me know if you'd like me to check another location or assist with anything else!",
+        "id": "e318908a-1b5a-4a08-88a0-9aabe5662698",
+        "metrics": {},
+        "planId": "6eebf79f-6250-4ab6-b953-9ecb493ba8a8",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

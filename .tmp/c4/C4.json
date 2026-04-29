@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "50f65962-a7b2-4de8-a93b-b993c69be3e7",
+        "isContentSafe": true,
+        "message": "We currently do not have a dedicated paediatric oncology department. Let me know if there's anything else I can assist you with!",
+        "id": "9a84f479-18b9-4c1d-8e47-95c65200816c",
+        "metrics": {},
+        "planId": "50f65962-a7b2-4de8-a93b-b993c69be3e7",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

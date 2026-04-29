@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "a4b9701a-5240-476e-80f3-b3640cb0617f",
+        "isContentSafe": true,
+        "message": "The oncology departments available at Onco Global - Bengaluru Whitefield are:\n\n- Medical Oncology\n- Pediatric Oncology\n\nLet me know if you'd like more details or assistance with booking an appointment!",
+        "id": "b67d0898-aed2-4d76-965f-511e74807a4f",
+        "metrics": {},
+        "planId": "a4b9701a-5240-476e-80f3-b3640cb0617f",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

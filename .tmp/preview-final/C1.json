@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "abd472bf-51c3-489f-b168-d7b0c53ec4bb",
+        "isContentSafe": true,
+        "message": "I couldn't find a facility matching \"Mumbai BKC.\" However, here is the full network catalog of specialties available at Onco Global:\n\n- Gynecologic Oncology\n- Medical Oncology\n- Pediatric Oncology\n- Radiation Oncology\n- Surgical Oncology\n- Hemato-Oncology\n- Palliative Care\n\nIf you'd like, I can help you find a specific facility or check availability for any of these specialties. Let me know!",
+        "id": "e232d909-fa1b-4aa3-a657-86c6e85c3ec8",
+        "metrics": {},
+        "planId": "abd472bf-51c3-489f-b168-d7b0c53ec4bb",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

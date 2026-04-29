@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "2c14532f-7f45-46bb-9853-9490539c01fe",
+        "isContentSafe": true,
+        "message": "Yes, Palliative Care is offered. Let me know if you'd like more information or assistance with anything related to this specialty!",
+        "id": "ae848100-d0fc-411d-bb36-10ff7f4f6e41",
+        "metrics": {},
+        "planId": "2c14532f-7f45-46bb-9853-9490539c01fe",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

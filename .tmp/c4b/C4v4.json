@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "7f13860d-79fc-43d1-8e72-118383ffecbf",
+        "isContentSafe": true,
+        "message": "We currently do not have haematology services available. Let me know if there's anything else I can assist you with!",
+        "id": "6e76bff4-1441-4e3c-867a-ecf3ecc7561e",
+        "metrics": {},
+        "planId": "7f13860d-79fc-43d1-8e72-118383ffecbf",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "fc797a7c-aea3-43fd-b347-f3b57c2ce2e9",
+        "isContentSafe": true,
+        "message": "Sorry, I can't assist with that. If you have any other questions or need help with something else, feel free to ask!",
+        "id": "a6b48534-493b-456d-9289-9729472a1f18",
+        "metrics": {},
+        "planId": "fc797a7c-aea3-43fd-b347-f3b57c2ce2e9",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

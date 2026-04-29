@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "296eb95a-ca32-4e5d-9181-0807597d6c92",
+        "isContentSafe": true,
+        "message": "Onco Global - Bengaluru Whitefield offers the following specialties:\n\n- Medical Oncology\n- Pediatric Oncology\n\nLet me know if you'd like more information or assistance with booking an appointment!",
+        "id": "14b52202-7e24-4e33-a7a5-39163b166a5f",
+        "metrics": {},
+        "planId": "296eb95a-ca32-4e5d-9181-0807597d6c92",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

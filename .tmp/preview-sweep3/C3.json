@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "cdfdeec1-b6a2-4791-9b44-5756e38f9d48",
+        "isContentSafe": true,
+        "message": "The departments offered include Medical Oncology, Surgical Oncology, Radiation Oncology, Pediatric Oncology, and Gynecologic Oncology. Let me know if you'd like more details about any of these!",
+        "id": "a2819181-67a0-4ef3-b346-4e52e35937ab",
+        "metrics": {},
+        "planId": "cdfdeec1-b6a2-4791-9b44-5756e38f9d48",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

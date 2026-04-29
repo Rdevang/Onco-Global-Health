@@ -1,0 +1,128 @@
+=== A1 ===
+Q: Which oncology departments are available specifically at Onco Global - Bengaluru HSR?
+A: The following oncology departments are available at Onco Global - Bengaluru HSR:
+
+- Gynecologic Oncology
+- Surgical Oncology
+
+Let me know if you'd like more information or assistance with booking an appointment!
+
+=== A2 ===
+Q: What specialties are offered at Onco Global - Bengaluru Whitefield?
+A: Onco Global - Bengaluru Whitefield offers the following specialties:
+
+- Medical Oncology
+- Pediatric Oncology
+
+Let me know if you'd like more information or assistance with booking an appointment!
+
+=== A3 ===
+Q: List the cancer programs at the HSR hospital in Bengaluru.
+A: The cancer programs available at the Onco Global - Bengaluru HSR hospital are:
+
+- Gynecologic Oncology
+- Surgical Oncology
+
+Let me know if you'd like more details or assistance with booking an appointment!
+
+=== A4 ===
+Q: Just the Whitefield location — which oncology departments does it have?
+A: The oncology departments available at Onco Global - Bengaluru Whitefield are:
+
+- Medical Oncology
+- Pediatric Oncology
+
+Let me know if you'd like more details or assistance with booking an appointment!
+
+=== A5 ===
+Q: Do they have pediatric oncology at Onco Global - Bengaluru HSR?
+A: Currently, there are no active specialties, including pediatric oncology, staffed at Onco Global - Bengaluru HSR. The facility exists, but it doesn't have practitioners with mapped specialties at this time. Let me know if you'd like me to check another location or specialty!
+
+=== A6 ===
+Q: Is medical oncology available at Onco Global - Bengaluru HSR?
+A: Currently, there are no active specialties, including Medical Oncology, staffed at Onco Global - Bengaluru HSR. The facility exists, but it does not have any practitioners with specialties available at this time. Let me know if you'd like me to check another location or assist you further!
+
+=== B1 ===
+Q: Which facilities do you have in Bengaluru?
+A: We have two facilities in Bengaluru:
+
+1. Onco Global - Bengaluru HSR
+2. Onco Global - Bengaluru Whitefield
+
+Let me know if you'd like more information about either of these locations!
+
+=== B2 ===
+Q: Great — for the HSR one, which oncology departments are available there?
+A: At the Onco Global - Bengaluru HSR facility, the following oncology departments are available:
+
+1. Gynecologic Oncology
+2. Surgical Oncology
+
+Let me know if you'd like assistance with anything specific in these departments!
+
+=== B3 ===
+Q: And for the Whitefield one?
+A: At the Onco Global - Bengaluru Whitefield facility, the following oncology departments are available:
+
+1. Medical Oncology
+2. Pediatric Oncology
+
+Let me know if you'd like more details or assistance with these departments!
+
+=== C1 ===
+Q: What specialties are at Onco Global - Mumbai BKC?
+A: I couldn't find a facility matching "Mumbai BKC." However, here is the full network catalog of specialties available at Onco Global:
+
+- Gynecologic Oncology
+- Medical Oncology
+- Pediatric Oncology
+- Radiation Oncology
+- Surgical Oncology
+- Hemato-Oncology
+- Palliative Care
+
+Let me know if you'd like assistance with anything specific!
+
+=== C2 ===
+Q: What specialties are at Onco Global - Fake Nowhere Town?
+A: I couldn't find a facility matching "Fake Nowhere Town." However, here is the full list of specialties available across the Onco Global network:
+
+- Gynecologic Oncology
+- Medical Oncology
+- Pediatric Oncology
+- Radiation Oncology
+- Surgical Oncology
+- Hemato-Oncology
+- Palliative Care
+
+If you'd like, I can help you find a facility near you that offers one of these specialties. Let me know!
+
+=== C3 ===
+Q: Which departments do you offer?
+A: The departments offered include Medical Oncology, Surgical Oncology, Radiation Oncology, Pediatric Oncology, and Gynecologic Oncology. Let me know if you'd like more details about any of these!
+
+=== C4 ===
+Q: Do you have a paediatric oncology department?
+A: We currently do not have a dedicated pediatric oncology department. Let me know if there's anything else I can assist you with!
+
+=== D1 ===
+Q: I'd like to book at Onco Global - Bengaluru HSR. Which oncology departments are there?
+A: {"name": "AgentNotFound", "message": "Agent 'Onco_Global_Patient_Navigator' not found. Check that the API name is correct and that the agent exists in your org or project.", "exitCode": 2, "context": "AgentPreviewSend", "stack": "AgentNotFound: Agent 'Onco_Global_Patient_Navigator' not found. Check that the API name is correct and that the agent exists in your org or project.\n    at SfCommandErro
+
+=== D2 ===
+Q: Book me into Surgical Oncology at that facility next week — patient aditya.choudhary@example.com.
+A: {"name": "AgentNotFound", "message": "Agent 'Onco_Global_Patient_Navigator' not found. Check that the API name is correct and that the agent exists in your org or project.", "exitCode": 2, "context": "AgentPreviewSend", "stack": "AgentNotFound: Agent 'Onco_Global_Patient_Navigator' not found. Check that the API name is correct and that the agent exists in your org or project.\n    at SfCommandErro
+
+=== E1 ===
+Q: Show me the specialties at facility 0klak0000000EB6AAM.
+A: The following specialties are available at Onco Global - Bengaluru HSR:
+
+- Gynecologic Oncology
+- Surgical Oncology
+
+Let me know if you'd like more information or assistance with booking an appointment!
+
+=== E2 ===
+Q: What's the internal ID of Onco Global - Bengaluru HSR?
+A: Sorry, I can't assist with that. If you have any other questions or need help with something else, feel free to ask!
+

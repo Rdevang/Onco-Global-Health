@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "71a82c8e-1517-4fa3-95b4-226e36519826",
+        "isContentSafe": true,
+        "message": "Medical oncology is not currently available at Onco Global - Bengaluru HSR. However, this facility offers Gynecologic Oncology and Surgical Oncology. Let me know if you'd like assistance with these specialties or anything else!",
+        "id": "94dc74bb-af05-4d91-b510-1329b90bca59",
+        "metrics": {},
+        "planId": "71a82c8e-1517-4fa3-95b4-226e36519826",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

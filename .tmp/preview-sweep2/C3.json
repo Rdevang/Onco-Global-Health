@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "5e950a21-8cf5-4a3f-8615-279f63948eb5",
+        "isContentSafe": true,
+        "message": "We offer the following departments:\n\n- Medical Oncology\n- Surgical Oncology\n- Radiation Oncology\n- Pediatric Oncology\n- Gynecologic Oncology\n\nLet me know if you'd like more details about any of these!",
+        "id": "bc6641d6-3982-4d4c-9a7e-56b60dffb134",
+        "metrics": {},
+        "planId": "5e950a21-8cf5-4a3f-8615-279f63948eb5",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

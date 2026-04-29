@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "31a1028b-21a6-4eae-a348-06cbb914f227",
+        "isContentSafe": true,
+        "message": "The cancer programs available at Onco Global - Bengaluru HSR are:\n\n- Gynecologic Oncology\n- Surgical Oncology\n\nLet me know if you'd like more details or assistance with booking an appointment!",
+        "id": "675a9d7d-8476-4f96-88c7-60103d8e8994",
+        "metrics": {},
+        "planId": "31a1028b-21a6-4eae-a348-06cbb914f227",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

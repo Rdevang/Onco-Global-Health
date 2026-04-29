@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "3e3b26a8-236c-4349-89f7-e6ca249c8547",
+        "isContentSafe": true,
+        "message": "At Onco Global - Mumbai BKC, the following specialties are available:\n\n- Gynecologic Oncology\n- Medical Oncology\n- Pediatric Oncology\n- Radiation Oncology\n- Surgical Oncology\n- Hemato-Oncology\n- Palliative Care\n\nLet me know if you'd like more details or assistance with booking an appointment!",
+        "id": "02b248d7-28d8-4334-8a4c-ee63e4af58cb",
+        "metrics": {},
+        "planId": "3e3b26a8-236c-4349-89f7-e6ca249c8547",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

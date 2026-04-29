@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "05307138-c0e2-496b-a2cb-73a29f5827b4",
+        "isContentSafe": true,
+        "message": "Yes, we do offer Hemato-Oncology. Let me know if you'd like more details or assistance with booking an appointment!",
+        "id": "f6a808bf-e14d-4351-9278-9d6a09c73894",
+        "metrics": {},
+        "planId": "05307138-c0e2-496b-a2cb-73a29f5827b4",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

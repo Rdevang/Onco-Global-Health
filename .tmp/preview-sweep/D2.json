@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "9bd18ae9-0161-4820-a4dc-be0196eff8c3",
+        "isContentSafe": true,
+        "message": "Here are the available slots for Surgical Oncology with Dr. Ananya Joshi at Onco Global - Bengaluru HSR next week:\n\n- April 26, 2026:\n  - 2:00 AM - 2:30 AM (IST)\n  - 2:30 AM - 3:00 AM (IST)\n  - 3:00 AM - 3:30 AM (IST)\n  - 3:30 AM - 4:00 AM (IST)\n  - 4:00 AM - 4:30 AM (IST)\n  - 4:30 AM - 5:00 AM (IST)\n  - 5:00 AM - 5:30 AM (IST)\n- April 27, 2026:\n  - 2:00 AM - 2:30 AM (IST)\n  - 2:30 AM - 3:00 AM (IST)\n  - 3:00 AM - 3:30 AM (IST)\n  - 3:30 AM - 4:00 AM (IST)\n  - 4:00 AM - 4:30 AM (IST)\n  - 4:30 AM - 5:00 AM (IST)\n  - 5:00 AM - 5:30 AM (IST)\n\nPlease let me know which slot works best for you, and I'll book it!",
+        "id": "49775394-475a-49c6-b385-128aa68beb4f",
+        "metrics": {},
+        "planId": "9bd18ae9-0161-4820-a4dc-be0196eff8c3",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

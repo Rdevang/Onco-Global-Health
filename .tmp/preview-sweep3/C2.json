@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "a2e61d9f-9265-46fe-9fa3-6d203ac9dcd7",
+        "isContentSafe": true,
+        "message": "I couldn't find a facility matching \"Fake Nowhere Town.\" However, here is the full list of specialties available across the Onco Global network:\n\n- Gynecologic Oncology\n- Medical Oncology\n- Pediatric Oncology\n- Radiation Oncology\n- Surgical Oncology\n- Hemato-Oncology\n- Palliative Care\n\nIf you'd like, I can help you find a facility near you that offers one of these specialties. Let me know!",
+        "id": "5fa0c17d-f31e-41d4-8947-0443599ee9cf",
+        "metrics": {},
+        "planId": "a2e61d9f-9265-46fe-9fa3-6d203ac9dcd7",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

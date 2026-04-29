@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "b811467a-d0a1-47b5-8bc7-9ad7feac6508",
+        "isContentSafe": true,
+        "message": "It seems we currently do not have a dedicated pediatric oncology department. Let me know if there's anything else I can assist you with!",
+        "id": "bb7e6f45-b9eb-4446-89f0-d52c3dcf4342",
+        "metrics": {},
+        "planId": "b811467a-d0a1-47b5-8bc7-9ad7feac6508",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

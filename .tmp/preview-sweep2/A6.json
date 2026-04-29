@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "64e9aada-a0bb-4834-8ff7-8701d212184f",
+        "isContentSafe": true,
+        "message": "I couldn't find a facility matching \"Bengaluru HSR,\" so I couldn't confirm whether Medical Oncology is available there. If you meant a different location or need help finding a facility, let me know!",
+        "id": "e177965e-7a68-4ebd-b353-9b39abe96e8f",
+        "metrics": {},
+        "planId": "64e9aada-a0bb-4834-8ff7-8701d212184f",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

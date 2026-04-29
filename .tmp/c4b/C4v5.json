@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "454867f4-feb0-4cd9-a875-4b0443bc78d5",
+        "isContentSafe": true,
+        "message": "Yes, we offer Gynecologic Oncology as one of our specialties. Let me know if you'd like more information or assistance with booking an appointment!",
+        "id": "d4324c62-fb6c-4428-9b11-ad4b06aa2544",
+        "metrics": {},
+        "planId": "454867f4-feb0-4cd9-a875-4b0443bc78d5",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

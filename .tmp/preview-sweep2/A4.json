@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "24553be6-8b55-480a-8f18-f0a92fc312d4",
+        "isContentSafe": true,
+        "message": "I couldn't find any facilities in Whitefield. Could you confirm the location or provide more details?",
+        "id": "2a11ba22-2c1d-4d14-be51-8bd40f699618",
+        "metrics": {},
+        "planId": "24553be6-8b55-480a-8f18-f0a92fc312d4",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

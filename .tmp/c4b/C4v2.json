@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "c347e58a-ac5f-4224-b267-31facbc1ec6a",
+        "isContentSafe": true,
+        "message": "Yes, Onco Global - Bengaluru Whitefield offers Pediatric Oncology. Let me know if you'd like assistance with anything else!",
+        "id": "90d4c562-4fd1-4972-b6e8-b535ea163b13",
+        "metrics": {},
+        "planId": "c347e58a-ac5f-4224-b267-31facbc1ec6a",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

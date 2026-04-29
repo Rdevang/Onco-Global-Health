@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "efb77feb-ce31-4d67-960e-36cc6a6bee96",
+        "isContentSafe": true,
+        "message": "Currently, Medical Oncology is not available at Onco Global - Bengaluru HSR. Let me know if you'd like me to check for this specialty at another location or assist you with anything else!",
+        "id": "312a8ce3-4d15-48e7-b132-6c8d1b3d13ac",
+        "metrics": {},
+        "planId": "efb77feb-ce31-4d67-960e-36cc6a6bee96",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

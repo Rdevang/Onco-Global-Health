@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "1c13080f-7834-4b18-a9a9-e53056fa32b2",
+        "isContentSafe": true,
+        "message": "At the Onco Global - Bengaluru HSR facility, the following oncology departments are available:\n\n1. Gynecologic Oncology\n2. Surgical Oncology\n\nLet me know if you'd like assistance with anything specific in these departments!",
+        "id": "286e458f-23a3-4a36-9885-0dc8b659cd12",
+        "metrics": {},
+        "planId": "1c13080f-7834-4b18-a9a9-e53056fa32b2",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

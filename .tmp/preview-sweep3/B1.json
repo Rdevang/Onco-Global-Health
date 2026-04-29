@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "52e8cb44-7c43-4028-b5ad-89ee6d5bc904",
+        "isContentSafe": true,
+        "message": "We have two facilities in Bengaluru:\n\n1. Onco Global - Bengaluru HSR\n2. Onco Global - Bengaluru Whitefield\n\nLet me know if you'd like more information about either of these locations!",
+        "id": "07f65b74-6d27-4adf-a251-2696fdb3fd44",
+        "metrics": {},
+        "planId": "52e8cb44-7c43-4028-b5ad-89ee6d5bc904",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

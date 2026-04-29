@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "b6c56248-4d46-4d58-a0b2-6357e71b74ab",
+        "isContentSafe": true,
+        "message": "Yes, we do have a Medical Oncology department. Let me know if you'd like more information or assistance with booking an appointment!",
+        "id": "d8274778-3d35-403d-a5ad-113103fffe34",
+        "metrics": {},
+        "planId": "b6c56248-4d46-4d58-a0b2-6357e71b74ab",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

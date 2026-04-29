@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "32e180ea-4037-4cd3-bb80-7ffdec6c630d",
+        "isContentSafe": true,
+        "message": "The specialties available at Onco Global - Bengaluru HSR are:\n\n- Gynecologic Oncology\n- Surgical Oncology\n\nLet me know if you'd like more information or assistance with booking an appointment!",
+        "id": "d1ea3895-5c63-421c-be7b-5366b892f6f5",
+        "metrics": {},
+        "planId": "32e180ea-4037-4cd3-bb80-7ffdec6c630d",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

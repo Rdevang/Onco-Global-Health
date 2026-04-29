@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "ad3ee989-fc9d-49e3-a03a-4204a4749f64",
+        "isContentSafe": true,
+        "message": "Currently, there are no active specialties, including Medical Oncology, staffed at Onco Global - Bengaluru HSR. The facility exists, but it does not have any practitioners with specialties available at this time. Let me know if you'd like me to check another location or assist you further!",
+        "id": "3b410245-8669-44f4-9a5d-d4d743d90438",
+        "metrics": {},
+        "planId": "ad3ee989-fc9d-49e3-a03a-4204a4749f64",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

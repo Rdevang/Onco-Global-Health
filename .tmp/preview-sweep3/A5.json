@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "9ddf060d-6e30-43b1-b610-6279d401b5de",
+        "isContentSafe": true,
+        "message": "Currently, there are no active specialties, including pediatric oncology, staffed at Onco Global - Bengaluru HSR. The facility exists, but it doesn't have practitioners with mapped specialties at this time. Let me know if you'd like me to check another location or specialty!",
+        "id": "22bbcbff-ac31-4271-b256-321fc9aef039",
+        "metrics": {},
+        "planId": "9ddf060d-6e30-43b1-b610-6279d401b5de",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

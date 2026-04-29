@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "6311477e-5dbd-4f77-bc57-f5fc9387674a",
+        "isContentSafe": true,
+        "message": "At Onco Global - Fake Nowhere Town, the following specialties are available:\n\n- Gynecologic Oncology\n- Medical Oncology\n- Pediatric Oncology\n- Radiation Oncology\n- Surgical Oncology\n- Hemato-Oncology\n- Palliative Care\n\nLet me know if you'd like more details or assistance with booking an appointment!",
+        "id": "78b8df2e-e6e2-4568-bfda-c7e2a3032c26",
+        "metrics": {},
+        "planId": "6311477e-5dbd-4f77-bc57-f5fc9387674a",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

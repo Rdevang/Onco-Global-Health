@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "0fde0a5e-4591-4d00-930a-aa722af6233b",
+        "isContentSafe": true,
+        "message": "I couldn't find a facility matching \"Bengaluru HSR,\" so I couldn't confirm whether pediatric oncology is available there. If you meant a different location or need help finding a facility, let me know!",
+        "id": "e3d4da90-2366-40ae-852a-5f67e844427a",
+        "metrics": {},
+        "planId": "0fde0a5e-4591-4d00-930a-aa722af6233b",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "07be521a-57d6-4c1d-9066-82a59567df96",
+        "isContentSafe": true,
+        "message": "We offer the following departments:\n\n- Gynecologic Oncology\n- Medical Oncology\n- Pediatric Oncology\n- Radiation Oncology\n- Surgical Oncology\n- Hemato-Oncology\n- Palliative Care\n\nLet me know if you'd like more details or assistance with booking an appointment in any of these departments!",
+        "id": "1052ce77-0275-4dc7-86e8-c5449baf1c18",
+        "metrics": {},
+        "planId": "07be521a-57d6-4c1d-9066-82a59567df96",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}

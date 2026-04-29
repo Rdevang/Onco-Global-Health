@@ -1,0 +1,19 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "feedbackId": "b9a68774-5a2f-43e1-b2c7-55ace0387a75",
+        "isContentSafe": true,
+        "message": "Paediatric oncology is not currently available at Onco Global - Bengaluru HSR. However, this facility offers Gynecologic Oncology and Surgical Oncology. Let me know if you'd like assistance with these specialties or anything else!",
+        "id": "078df04d-a288-44d2-9687-59bc20e9167c",
+        "metrics": {},
+        "planId": "b9a68774-5a2f-43e1-b2c7-55ace0387a75",
+        "result": [],
+        "citedReferences": []
+      }
+    ]
+  },
+  "warnings": []
+}
