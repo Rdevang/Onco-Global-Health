@@ -1,0 +1,1128 @@
+<template>
+    <div class="portal-shell">
+        <!-- Skip link (WCAG 2.4.1) -->
+        <a
+            href="#main"
+            class="portal-skip-link slds-button slds-button_brand"
+            onclick={handleSkipToMain}
+            >Skip to main content</a
+        >
+
+        <!-- Polite live region for announcements -->
+        <div
+            class="slds-assistive-text"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+        >
+            {statusMessage}
+        </div>
+
+        <!-- ================================================================
+             HEADER
+             ================================================================ -->
+        <header class={headerClass} role="banner" aria-label="Site header">
+            <div class="slds-grid slds-grid_vertical-align-center slds-p-left_large">
+                <div
+                    class="portal-logo slds-grid slds-grid_vertical-align-center"
+                    aria-label={brandName}
+                >
+                    <span class="portal-logo__mark slds-m-right_small" aria-hidden="true">
+                        <lightning-icon
+                            icon-name="utility:heart"
+                            alternative-text="Health logo"
+                            size="small"
+                            variant="inverse"
+                        ></lightning-icon>
+                    </span>
+                    <span class="portal-logo__text">{brandName}</span>
+                </div>
+            </div>
+
+            <nav
+                class="portal-nav slds-grid slds-grid_vertical-align-center"
+                role="navigation"
+                aria-label="Primary"
+            >
+                <ul class="slds-list_horizontal portal-nav__list">
+                    <li class="slds-item portal-nav__item">
+                        <a href="#services" class="portal-nav__link">Services</a>
+                    </li>
+                    <li class="slds-item portal-nav__item">
+                        <a href="#specialties" class="portal-nav__link">Specialties</a>
+                    </li>
+                    <li class="slds-item portal-nav__item">
+                        <a href="#journey" class="portal-nav__link">How it works</a>
+                    </li>
+                    <li class="slds-item portal-nav__item">
+                        <a href="#assistant" class="portal-nav__link">Health Assistant</a>
+                    </li>
+                    <li class="slds-item portal-nav__item">
+                        <a href="#contact" class="portal-nav__link">Contact</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="portal-header__actions slds-grid slds-grid_vertical-align-center slds-p-right_large">
+                <a
+                    href="#services"
+                    class="portal-header__signin slds-m-right_small"
+                    aria-label="Sign in to the patient portal"
+                >
+                    Sign in
+                </a>
+                <a
+                    href={emergencyHref}
+                    class="portal-emergency-cta slds-button slds-button_destructive"
+                    aria-label="Call Emergency or Urgent Care now"
+                >
+                    <lightning-icon
+                        icon-name="utility:warning"
+                        size="x-small"
+                        variant="inverse"
+                        alternative-text="Urgent"
+                        class="slds-m-right_x-small"
+                    ></lightning-icon>
+                    <span>Emergency / Urgent Care</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- ================================================================
+             MAIN
+             ================================================================ -->
+        <main
+            id="main"
+            data-id="main-content"
+            class="portal-main"
+            tabindex="-1"
+            role="main"
+        >
+            <!-- ============================================================
+                 HERO
+                 ============================================================ -->
+            <section class="portal-hero" aria-labelledby="portal-hero-heading">
+                <div class="portal-hero__overlay" aria-hidden="true"></div>
+                <div class="portal-hero__content slds-container_x-large slds-container_center">
+                    <p class="portal-hero__eyebrow">Your Digital Front Door</p>
+                    <h1
+                        id="portal-hero-heading"
+                        class="portal-hero__heading"
+                    >
+                        Compassionate cancer care, just a search away.
+                    </h1>
+                    <p class="portal-hero__subheading">
+                        Find providers, clinics, and the care that's right for you—across our
+                        network of specialists, in seconds. No phone trees. No paperwork mountain.
+                    </p>
+
+                    <form
+                        class="portal-search slds-grid slds-grid_vertical-align-end slds-wrap"
+                        onsubmit={handleSearchSubmit}
+                        role="search"
+                        aria-label="Find a provider or clinic"
+                    >
+                        <div class="portal-search__field slds-col slds-grow">
+                            <lightning-input
+                                data-id="hero-search"
+                                type="search"
+                                label="Search providers, clinics, or specialties"
+                                variant="label-hidden"
+                                placeholder="Search providers, clinics, or specialties..."
+                                value={searchTerm}
+                                onchange={handleSearchChange}
+                                aria-describedby="portal-search-help"
+                            ></lightning-input>
+                            <p
+                                id="portal-search-help"
+                                class="slds-form-element__help portal-search__help"
+                            >
+                                Try a doctor's name, a city, or a specialty (e.g. "Medical Oncology").
+                            </p>
+                        </div>
+                        <div class="portal-search__submit slds-col slds-no-flex slds-p-left_small">
+                            <button
+                                type="submit"
+                                class="slds-button slds-button_brand portal-search__btn"
+                                aria-label="Search providers, clinics, or specialties"
+                            >
+                                <lightning-icon
+                                    icon-name="utility:search"
+                                    size="x-small"
+                                    variant="inverse"
+                                    alternative-text=""
+                                    class="slds-m-right_x-small"
+                                ></lightning-icon>
+                                Search
+                            </button>
+                        </div>
+                    </form>
+
+                    <div
+                        class="portal-quick-filters slds-m-top_medium"
+                        role="group"
+                        aria-label="Popular searches"
+                    >
+                        <span class="portal-quick-filters__label">Popular searches:</span>
+                        <button
+                            type="button"
+                            class="portal-chip"
+                            data-term="Medical Oncology"
+                            onclick={handleQuickFilter}
+                        >
+                            Medical Oncology
+                        </button>
+                        <button
+                            type="button"
+                            class="portal-chip"
+                            data-term="Pediatric Oncology"
+                            onclick={handleQuickFilter}
+                        >
+                            Pediatric Oncology
+                        </button>
+                        <button
+                            type="button"
+                            class="portal-chip"
+                            data-term="Bengaluru"
+                            onclick={handleQuickFilter}
+                        >
+                            Bengaluru
+                        </button>
+                        <button
+                            type="button"
+                            class="portal-chip"
+                            data-term="Second Opinion"
+                            onclick={handleQuickFilter}
+                        >
+                            Second Opinion
+                        </button>
+                    </div>
+
+                    <ul class="portal-trust-badges slds-m-top_large" aria-label="Quality and accreditation">
+                        <li class="portal-trust-badge">
+                            <lightning-icon
+                                icon-name="utility:lock"
+                                size="x-small"
+                                alternative-text=""
+                                class="slds-m-right_x-small"
+                            ></lightning-icon>
+                            HIPAA-aligned &amp; encrypted
+                        </li>
+                        <li class="portal-trust-badge">
+                            <lightning-icon
+                                icon-name="utility:shield"
+                                size="x-small"
+                                alternative-text=""
+                                class="slds-m-right_x-small"
+                            ></lightning-icon>
+                            NABH accredited
+                        </li>
+                        <li class="portal-trust-badge">
+                            <lightning-icon
+                                icon-name="utility:einstein"
+                                size="x-small"
+                                alternative-text=""
+                                class="slds-m-right_x-small"
+                            ></lightning-icon>
+                            AI-assisted, clinician-verified
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 TRUST STATS
+                 ============================================================ -->
+            <section class="portal-stats" aria-labelledby="portal-stats-heading">
+                <h2 id="portal-stats-heading" class="slds-assistive-text">
+                    Network at a glance
+                </h2>
+                <div
+                    class="slds-container_x-large slds-container_center slds-grid slds-wrap slds-grid_align-center slds-p-vertical_large slds-p-horizontal_medium"
+                >
+                    <template for:each={trustStats} for:item="s">
+                        <div
+                            key={s.key}
+                            class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 portal-stat"
+                        >
+                            <div class="portal-stat__icon" aria-hidden="true">
+                                <lightning-icon
+                                    icon-name={s.icon}
+                                    size="small"
+                                    alternative-text=""
+                                ></lightning-icon>
+                            </div>
+                            <div class="portal-stat__value">{s.value}</div>
+                            <div class="portal-stat__label">{s.label}</div>
+                        </div>
+                    </template>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 QUICK ACTIONS / FEATURE CARDS
+                 ============================================================ -->
+            <section
+                id="services"
+                class="portal-section portal-section_features"
+                aria-labelledby="portal-features-heading"
+            >
+                <div class="slds-container_x-large slds-container_center slds-p-around_large">
+                    <div class="portal-section__header slds-text-align_center slds-m-bottom_large">
+                        <p class="portal-section__eyebrow">Care, on your terms</p>
+                        <h2
+                            id="portal-features-heading"
+                            class="portal-section__heading"
+                        >
+                            Three ways to get started in seconds
+                        </h2>
+                        <p class="portal-section__sub">
+                            Whether you know exactly who you want to see, just need to log in, or
+                            you are not sure where to begin—we have you covered.
+                        </p>
+                    </div>
+
+                    <div class="slds-grid slds-wrap slds-gutters_medium portal-cards">
+                        <template for:each={featureCards} for:item="card">
+                            <div
+                                key={card.key}
+                                class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-bottom_medium"
+                            >
+                                <lightning-card class="portal-card">
+                                    <div
+                                        class="slds-p-around_medium portal-card__body"
+                                    >
+                                        <div class="portal-card__icon slds-m-bottom_small" aria-hidden="true">
+                                            <lightning-icon
+                                                icon-name={card.icon}
+                                                size="medium"
+                                                alternative-text=""
+                                            ></lightning-icon>
+                                        </div>
+                                        <h3 class="portal-card__title">{card.title}</h3>
+                                        <p class="portal-card__desc">{card.description}</p>
+                                        <ul class="portal-card__bullets">
+                                            <template for:each={card.bullets} for:item="b">
+                                                <li key={b}>
+                                                    <lightning-icon
+                                                        icon-name="utility:check"
+                                                        size="xx-small"
+                                                        alternative-text=""
+                                                        class="slds-m-right_x-small"
+                                                    ></lightning-icon>
+                                                    {b}
+                                                </li>
+                                            </template>
+                                        </ul>
+                                        <button
+                                            class="slds-button slds-button_neutral portal-card__cta"
+                                            data-key={card.key}
+                                            onclick={handleFeatureAction}
+                                            aria-label={card.ariaLabel}
+                                        >
+                                            {card.ctaLabel}
+                                            <lightning-icon
+                                                icon-name="utility:forward"
+                                                size="xx-small"
+                                                alternative-text=""
+                                                class="slds-m-left_x-small"
+                                            ></lightning-icon>
+                                        </button>
+                                    </div>
+                                </lightning-card>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 SPECIALTIES
+                 ============================================================ -->
+            <section
+                id="specialties"
+                class="portal-section portal-section_specialties"
+                aria-labelledby="portal-specialties-heading"
+            >
+                <div class="slds-container_x-large slds-container_center slds-p-around_large">
+                    <div class="portal-section__header slds-text-align_center slds-m-bottom_large">
+                        <p class="portal-section__eyebrow">Our oncology programs</p>
+                        <h2 id="portal-specialties-heading" class="portal-section__heading">
+                            Specialized care for every cancer journey
+                        </h2>
+                        <p class="portal-section__sub">
+                            Nationally recognized oncology programs, multidisciplinary tumor boards,
+                            and supportive-care services—at every Onco Global location.
+                        </p>
+                    </div>
+
+                    <div class="slds-grid slds-wrap slds-gutters_medium">
+                        <template for:each={specialties} for:item="sp">
+                            <div
+                                key={sp.key}
+                                class="slds-col slds-size_1-of-1 slds-small-size_1-of-2 slds-large-size_1-of-3 slds-p-bottom_medium"
+                            >
+                                <button
+                                    type="button"
+                                    class="portal-specialty"
+                                    data-key={sp.key}
+                                    data-name={sp.name}
+                                    onclick={handleSpecialtyClick}
+                                    aria-label={sp.name}
+                                >
+                                    <span class="portal-specialty__icon" aria-hidden="true">
+                                        <lightning-icon
+                                            icon-name={sp.icon}
+                                            size="small"
+                                            alternative-text=""
+                                        ></lightning-icon>
+                                    </span>
+                                    <span class="portal-specialty__body">
+                                        <span class="portal-specialty__name">{sp.name}</span>
+                                        <span class="portal-specialty__blurb">{sp.blurb}</span>
+                                        <span class="portal-specialty__cta">
+                                            Explore program
+                                            <lightning-icon
+                                                icon-name="utility:forward"
+                                                size="xx-small"
+                                                alternative-text=""
+                                                class="slds-m-left_x-small"
+                                            ></lightning-icon>
+                                        </span>
+                                    </span>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 HOW IT WORKS
+                 ============================================================ -->
+            <section
+                id="journey"
+                class="portal-section portal-section_journey"
+                aria-labelledby="portal-journey-heading"
+            >
+                <div class="slds-container_x-large slds-container_center slds-p-around_large">
+                    <div class="portal-section__header slds-text-align_center slds-m-bottom_large">
+                        <p class="portal-section__eyebrow">How it works</p>
+                        <h2 id="portal-journey-heading" class="portal-section__heading">
+                            Your journey, end to end
+                        </h2>
+                        <p class="portal-section__sub">
+                            From first question to follow-up visit, we have engineered every step to
+                            be calmer and clearer.
+                        </p>
+                    </div>
+
+                    <ol class="portal-journey-list slds-grid slds-wrap slds-gutters_medium">
+                        <template for:each={journeySteps} for:item="step">
+                            <li
+                                key={step.key}
+                                class="slds-col slds-size_1-of-1 slds-small-size_1-of-2 slds-large-size_1-of-4 slds-p-bottom_medium"
+                            >
+                                <article class="portal-journey-step">
+                                    <div class="portal-journey-step__number" aria-hidden="true">
+                                        {step.step}
+                                    </div>
+                                    <h3 class="portal-journey-step__title">{step.title}</h3>
+                                    <p class="portal-journey-step__blurb">{step.blurb}</p>
+                                </article>
+                            </li>
+                        </template>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 HEALTH ASSISTANT
+                 ============================================================ -->
+            <section
+                id="assistant"
+                class="portal-assistant"
+                aria-labelledby="portal-assistant-heading"
+            >
+                <div
+                    class="slds-container_x-large slds-container_center slds-grid slds-wrap slds-grid_align-center slds-p-around_large portal-assistant__inner"
+                >
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-3">
+                        <div class="portal-assistant__badge slds-m-bottom_small" aria-hidden="true">
+                            <lightning-icon
+                                icon-name="utility:einstein"
+                                size="medium"
+                                variant="inverse"
+                                alternative-text=""
+                            ></lightning-icon>
+                        </div>
+                        <h2
+                            id="portal-assistant-heading"
+                            class="portal-assistant__heading"
+                        >
+                            Talk to our Health Assistant
+                        </h2>
+                        <p class="portal-assistant__copy">
+                            Powered by Agentforce. Get real-time help finding the right care,
+                            understanding next steps, and scheduling visits—any time of day.
+                        </p>
+
+                        <ul class="portal-assistant__list">
+                            <li>
+                                <lightning-icon
+                                    icon-name="utility:check"
+                                    size="x-small"
+                                    variant="inverse"
+                                    alternative-text=""
+                                    class="slds-m-right_x-small"
+                                ></lightning-icon>
+                                Browse specialties and providers without the phone tag
+                            </li>
+                            <li>
+                                <lightning-icon
+                                    icon-name="utility:check"
+                                    size="x-small"
+                                    variant="inverse"
+                                    alternative-text=""
+                                    class="slds-m-right_x-small"
+                                ></lightning-icon>
+                                Get matched to the right department for your symptoms
+                            </li>
+                            <li>
+                                <lightning-icon
+                                    icon-name="utility:check"
+                                    size="x-small"
+                                    variant="inverse"
+                                    alternative-text=""
+                                    class="slds-m-right_x-small"
+                                ></lightning-icon>
+                                See live appointment slots and book in one conversation
+                            </li>
+                            <li>
+                                <lightning-icon
+                                    icon-name="utility:check"
+                                    size="x-small"
+                                    variant="inverse"
+                                    alternative-text=""
+                                    class="slds-m-right_x-small"
+                                ></lightning-icon>
+                                Cancel or reschedule existing visits without paperwork
+                            </li>
+                        </ul>
+
+                        <div class="portal-assistant__actions slds-m-top_medium">
+                            <lightning-button
+                                variant="brand"
+                                label="Launch Health Assistant"
+                                title="Launch Health Assistant"
+                                icon-name="utility:chat"
+                                icon-position="left"
+                                onclick={handleLaunchAssistant}
+                                class="portal-assistant__cta"
+                            ></lightning-button>
+                            <a
+                                href="#journey"
+                                class="portal-assistant__secondary slds-m-left_medium"
+                                >See how it works</a
+                            >
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 PATIENT STORIES
+                 ============================================================ -->
+            <section
+                class="portal-section portal-section_stories"
+                aria-labelledby="portal-stories-heading"
+            >
+                <div class="slds-container_x-large slds-container_center slds-p-around_large">
+                    <div class="portal-section__header slds-text-align_center slds-m-bottom_large">
+                        <p class="portal-section__eyebrow">Patient stories</p>
+                        <h2 id="portal-stories-heading" class="portal-section__heading">
+                            Care that listens, beyond the visit
+                        </h2>
+                    </div>
+
+                    <div class="slds-grid slds-wrap slds-gutters_medium">
+                        <template for:each={testimonials} for:item="t">
+                            <div
+                                key={t.key}
+                                class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-bottom_medium"
+                            >
+                                <figure class="portal-testimonial">
+                                    <blockquote class="portal-testimonial__quote">
+                                        <p>&ldquo;{t.quote}&rdquo;</p>
+                                    </blockquote>
+                                    <figcaption class="portal-testimonial__caption">
+                                        <span
+                                            class="portal-testimonial__avatar"
+                                            aria-hidden="true"
+                                            >{t.initials}</span
+                                        >
+                                        <span class="portal-testimonial__person">
+                                            <span class="portal-testimonial__name">{t.name}</span>
+                                            <span class="portal-testimonial__role">{t.role}</span>
+                                        </span>
+                                    </figcaption>
+                                </figure>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 LOCATIONS
+                 ============================================================ -->
+            <section
+                id="locations"
+                class="portal-section portal-section_locations"
+                aria-labelledby="portal-locations-heading"
+            >
+                <div class="slds-container_x-large slds-container_center slds-p-around_large">
+                    <div class="portal-section__header slds-text-align_center slds-m-bottom_large">
+                        <p class="portal-section__eyebrow">Locations</p>
+                        <h2 id="portal-locations-heading" class="portal-section__heading">
+                            Find an Onco Global near you
+                        </h2>
+                        <p class="portal-section__sub">
+                            A growing national network—each clinic backed by the same care standard.
+                        </p>
+                    </div>
+
+                    <div class="slds-grid slds-wrap slds-gutters_medium">
+                        <template for:each={locations} for:item="loc">
+                            <div
+                                key={loc.key}
+                                class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-bottom_medium"
+                            >
+                                <button
+                                    type="button"
+                                    class="portal-location"
+                                    data-key={loc.key}
+                                    data-name={loc.name}
+                                    onclick={handleLocationClick}
+                                    aria-label={loc.name}
+                                >
+                                    <span class="portal-location__icon" aria-hidden="true">
+                                        <lightning-icon
+                                            icon-name="utility:checkin"
+                                            size="small"
+                                            alternative-text=""
+                                        ></lightning-icon>
+                                    </span>
+                                    <span class="portal-location__body">
+                                        <span class="portal-location__name">{loc.name}</span>
+                                        <span class="portal-location__city">{loc.city}</span>
+                                        <span class="portal-location__blurb">{loc.blurb}</span>
+                                        <span class="portal-location__hours">
+                                            <lightning-icon
+                                                icon-name="utility:clock"
+                                                size="xx-small"
+                                                alternative-text=""
+                                                class="slds-m-right_x-small"
+                                            ></lightning-icon>
+                                            {loc.hours}
+                                        </span>
+                                    </span>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 HEALTH LIBRARY
+                 ============================================================ -->
+            <section
+                class="portal-section portal-section_library"
+                aria-labelledby="portal-library-heading"
+            >
+                <div class="slds-container_x-large slds-container_center slds-p-around_large">
+                    <div class="portal-section__header slds-grid slds-wrap slds-grid_align-spread slds-grid_vertical-align-end slds-m-bottom_large">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-3">
+                            <p class="portal-section__eyebrow">Health Library</p>
+                            <h2 id="portal-library-heading" class="portal-section__heading">
+                                Information you can trust
+                            </h2>
+                            <p class="portal-section__sub">
+                                Plain-language guides written and reviewed by our oncology and
+                                supportive-care teams.
+                            </p>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-text-align_right portal-library__more">
+                            <a href="#library" class="portal-section__link"
+                                >Browse the library
+                                <lightning-icon
+                                    icon-name="utility:forward"
+                                    size="xx-small"
+                                    alternative-text=""
+                                    class="slds-m-left_x-small"
+                                ></lightning-icon>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="slds-grid slds-wrap slds-gutters_medium">
+                        <template for:each={articles} for:item="art">
+                            <div
+                                key={art.key}
+                                class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-bottom_medium"
+                            >
+                                <article class="portal-article">
+                                    <div class="portal-article__cover" aria-hidden="true">
+                                        <lightning-icon
+                                            icon-name="utility:knowledge_base"
+                                            size="medium"
+                                            variant="inverse"
+                                            alternative-text=""
+                                        ></lightning-icon>
+                                    </div>
+                                    <div class="portal-article__body">
+                                        <span class="portal-article__category">{art.category}</span>
+                                        <h3 class="portal-article__title">
+                                            <button
+                                                type="button"
+                                                class="portal-article__link"
+                                                data-key={art.key}
+                                                data-title={art.title}
+                                                onclick={handleArticleClick}
+                                            >
+                                                {art.title}
+                                            </button>
+                                        </h3>
+                                        <p class="portal-article__blurb">{art.blurb}</p>
+                                        <p class="portal-article__meta">
+                                            <lightning-icon
+                                                icon-name="utility:clock"
+                                                size="xx-small"
+                                                alternative-text=""
+                                                class="slds-m-right_x-small"
+                                            ></lightning-icon>
+                                            {art.readTime}
+                                        </p>
+                                    </div>
+                                </article>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 INSURANCE & BILLING
+                 ============================================================ -->
+            <section
+                class="portal-section portal-section_billing"
+                aria-labelledby="portal-billing-heading"
+            >
+                <div
+                    class="slds-container_x-large slds-container_center slds-grid slds-wrap slds-gutters_large slds-p-around_large slds-grid_vertical-align-center"
+                >
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 portal-billing__copy">
+                        <p class="portal-section__eyebrow">Insurance &amp; payment</p>
+                        <h2 id="portal-billing-heading" class="portal-section__heading">
+                            Care you can plan for
+                        </h2>
+                        <p class="portal-section__sub">
+                            We accept all major commercial plans and most national programs. Every
+                            estimate is reviewed by a financial counselor before your visit—so there
+                            are no surprises.
+                        </p>
+                        <ul class="portal-billing__list">
+                            <li>
+                                <lightning-icon
+                                    icon-name="utility:check"
+                                    size="x-small"
+                                    alternative-text=""
+                                    class="slds-m-right_x-small"
+                                ></lightning-icon>
+                                Real-time eligibility check during scheduling
+                            </li>
+                            <li>
+                                <lightning-icon
+                                    icon-name="utility:check"
+                                    size="x-small"
+                                    alternative-text=""
+                                    class="slds-m-right_x-small"
+                                ></lightning-icon>
+                                Transparent good-faith estimates
+                            </li>
+                            <li>
+                                <lightning-icon
+                                    icon-name="utility:check"
+                                    size="x-small"
+                                    alternative-text=""
+                                    class="slds-m-right_x-small"
+                                ></lightning-icon>
+                                Interest-free payment plans available
+                            </li>
+                            <li>
+                                <lightning-icon
+                                    icon-name="utility:check"
+                                    size="x-small"
+                                    alternative-text=""
+                                    class="slds-m-right_x-small"
+                                ></lightning-icon>
+                                Financial assistance for those who qualify
+                            </li>
+                        </ul>
+                        <div class="slds-m-top_medium">
+                            <a href="#billing" class="slds-button slds-button_outline-brand portal-billing__cta">
+                                Estimate my visit cost
+                            </a>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 portal-billing__panel">
+                        <div class="portal-billing__panel-card" aria-hidden="true">
+                            <div class="portal-billing__panel-row">
+                                <span>Visit type</span>
+                                <strong>New consult — Medical Oncology</strong>
+                            </div>
+                            <div class="portal-billing__panel-row">
+                                <span>Insurance</span>
+                                <strong>Verified · Tier-1 plan</strong>
+                            </div>
+                            <div class="portal-billing__panel-row">
+                                <span>Estimated copay</span>
+                                <strong>₹ 1,200</strong>
+                            </div>
+                            <div class="portal-billing__panel-row portal-billing__panel-row_total">
+                                <span>Estimated total</span>
+                                <strong>₹ 4,800</strong>
+                            </div>
+                            <p class="portal-billing__panel-note">
+                                Estimate · final cost confirmed by financial counselor
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 FAQ
+                 ============================================================ -->
+            <section
+                class="portal-section portal-section_faq"
+                aria-labelledby="portal-faq-heading"
+            >
+                <div class="slds-container_medium slds-container_center slds-p-around_large">
+                    <div class="portal-section__header slds-text-align_center slds-m-bottom_large">
+                        <p class="portal-section__eyebrow">Frequently asked</p>
+                        <h2 id="portal-faq-heading" class="portal-section__heading">
+                            Answers to common questions
+                        </h2>
+                        <p class="portal-section__sub">
+                            Cannot find what you are looking for? Ask the Health Assistant—available
+                            24 / 7.
+                        </p>
+                    </div>
+
+                    <ul class="portal-faq" role="list">
+                        <template for:each={faqsView} for:item="faq">
+                            <li key={faq.key} class={faq.itemClass}>
+                                <h3 class="portal-faq__heading">
+                                    <button
+                                        type="button"
+                                        class="portal-faq__trigger"
+                                        aria-expanded={faq.buttonAria}
+                                        aria-controls={faq.key}
+                                        data-key={faq.key}
+                                        onclick={handleFaqToggle}
+                                    >
+                                        <span class="portal-faq__question">{faq.question}</span>
+                                        <lightning-icon
+                                            icon-name="utility:chevrondown"
+                                            size="x-small"
+                                            alternative-text=""
+                                            class="portal-faq__chevron"
+                                        ></lightning-icon>
+                                    </button>
+                                </h3>
+                                <div
+                                    id={faq.key}
+                                    class="portal-faq__panel"
+                                    hidden={faq.panelHidden}
+                                >
+                                    <p>{faq.answer}</p>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 NEWSLETTER
+                 ============================================================ -->
+            <section class="portal-newsletter" aria-labelledby="portal-newsletter-heading">
+                <div
+                    class="slds-container_large slds-container_center slds-grid slds-wrap slds-gutters_medium slds-grid_vertical-align-center slds-p-around_large"
+                >
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                        <h2
+                            id="portal-newsletter-heading"
+                            class="portal-newsletter__heading"
+                        >
+                            Get our monthly health digest
+                        </h2>
+                        <p class="portal-newsletter__copy">
+                            Plain-language oncology updates, upcoming free clinics, and tips from our
+                            care teams. No spam, ever—unsubscribe with one click.
+                        </p>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                        <template if:false={newsletterSuccess}>
+                            <form
+                                class="portal-newsletter__form"
+                                onsubmit={handleNewsletterSubmit}
+                                aria-describedby="portal-newsletter-status"
+                            >
+                                <div class={newsletterFieldClass}>
+                                    <lightning-input
+                                        type="email"
+                                        label="Email address"
+                                        variant="label-hidden"
+                                        placeholder="you@example.com"
+                                        required
+                                        value={newsletterEmail}
+                                        message-when-value-missing="Please enter your email address."
+                                        message-when-type-mismatch="Please enter a valid email address."
+                                        onchange={handleNewsletterChange}
+                                        aria-label="Email address for the newsletter"
+                                    ></lightning-input>
+                                </div>
+                                <button
+                                    type="submit"
+                                    class="slds-button slds-button_brand portal-newsletter__btn"
+                                >
+                                    Subscribe
+                                </button>
+                                <template if:true={newsletterError}>
+                                    <p
+                                        id="portal-newsletter-status"
+                                        class="portal-newsletter__error"
+                                        role="alert"
+                                    >
+                                        {newsletterError}
+                                    </p>
+                                </template>
+                            </form>
+                        </template>
+                        <template if:true={newsletterSuccess}>
+                            <p class="portal-newsletter__success" role="status">
+                                <lightning-icon
+                                    icon-name="utility:success"
+                                    size="x-small"
+                                    alternative-text=""
+                                    class="slds-m-right_x-small"
+                                ></lightning-icon>
+                                You are subscribed. Look for our next health digest.
+                            </p>
+                        </template>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- ================================================================
+             FOOTER
+             ================================================================ -->
+        <footer
+            id="contact"
+            class="portal-footer"
+            role="contentinfo"
+            aria-label="Site footer"
+        >
+            <div
+                class="slds-container_x-large slds-container_center slds-grid slds-wrap slds-gutters_medium slds-p-around_large"
+            >
+                <div
+                    class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-p-bottom_medium"
+                >
+                    <h2 class="portal-footer__heading">Contact Us</h2>
+                    <ul class="portal-footer__list slds-m-top_small">
+                        <li>
+                            <a
+                                href={emergencyHref}
+                                class="portal-footer__link"
+                                aria-label="Call Emergency or Urgent Care"
+                            >
+                                <lightning-icon
+                                    icon-name="utility:call"
+                                    size="x-small"
+                                    alternative-text=""
+                                    class="slds-m-right_x-small"
+                                ></lightning-icon>
+                                Emergency: {emergencyPhone}
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="mailto:hello@oncoglobal.example"
+                                class="portal-footer__link"
+                            >
+                                <lightning-icon
+                                    icon-name="utility:email"
+                                    size="x-small"
+                                    alternative-text=""
+                                    class="slds-m-right_x-small"
+                                ></lightning-icon>
+                                hello@oncoglobal.example
+                            </a>
+                        </li>
+                        <li>
+                            <span class="portal-footer__line">
+                                <lightning-icon
+                                    icon-name="utility:checkin"
+                                    size="x-small"
+                                    alternative-text=""
+                                    class="slds-m-right_x-small"
+                                ></lightning-icon>
+                                123 Care Way, Bengaluru, India
+                            </span>
+                        </li>
+                        <li>
+                            <span class="portal-footer__line">
+                                <lightning-icon
+                                    icon-name="utility:clock"
+                                    size="x-small"
+                                    alternative-text=""
+                                    class="slds-m-right_x-small"
+                                ></lightning-icon>
+                                Patient line · Mon–Sun, 7AM–11PM
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div
+                    class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-p-bottom_medium"
+                >
+                    <h2 class="portal-footer__heading">Our Services</h2>
+                    <ul class="portal-footer__list slds-m-top_small">
+                        <li><a href="#services" class="portal-footer__link">Find a Provider</a></li>
+                        <li><a href="#services" class="portal-footer__link">Schedule a Visit</a></li>
+                        <li><a href="#services" class="portal-footer__link">Patient Portal</a></li>
+                        <li><a href="#services" class="portal-footer__link">Symptom Checker</a></li>
+                        <li><a href="#specialties" class="portal-footer__link">Oncology Programs</a></li>
+                        <li><a href="#locations" class="portal-footer__link">Locations</a></li>
+                    </ul>
+                </div>
+
+                <div
+                    class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-p-bottom_medium"
+                >
+                    <h2 class="portal-footer__heading">Legal &amp; Privacy</h2>
+                    <ul class="portal-footer__list slds-m-top_small">
+                        <li><a href="#privacy" class="portal-footer__link">Privacy Policy</a></li>
+                        <li><a href="#hipaa" class="portal-footer__link">HIPAA Notice</a></li>
+                        <li><a href="#terms" class="portal-footer__link">Terms of Use</a></li>
+                        <li>
+                            <a href="#accessibility" class="portal-footer__link"
+                                >Accessibility Statement</a
+                            >
+                        </li>
+                        <li>
+                            <a href="#nondiscrimination" class="portal-footer__link"
+                                >Notice of Non-Discrimination</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+
+                <div
+                    class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-p-bottom_medium"
+                >
+                    <h2 class="portal-footer__heading">Social Media</h2>
+                    <ul class="portal-footer__list slds-m-top_small portal-footer__social">
+                        <li>
+                            <a
+                                href="#linkedin"
+                                class="portal-footer__link portal-footer__icon-link"
+                                aria-label="Visit us on LinkedIn"
+                            >
+                                <lightning-icon
+                                    icon-name="utility:socialshare"
+                                    size="x-small"
+                                    alternative-text=""
+                                ></lightning-icon>
+                                <span class="slds-m-left_x-small">LinkedIn</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="#twitter"
+                                class="portal-footer__link portal-footer__icon-link"
+                                aria-label="Visit us on X (Twitter)"
+                            >
+                                <lightning-icon
+                                    icon-name="utility:share"
+                                    size="x-small"
+                                    alternative-text=""
+                                ></lightning-icon>
+                                <span class="slds-m-left_x-small">X (Twitter)</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="#youtube"
+                                class="portal-footer__link portal-footer__icon-link"
+                                aria-label="Visit us on YouTube"
+                            >
+                                <lightning-icon
+                                    icon-name="utility:video"
+                                    size="x-small"
+                                    alternative-text=""
+                                ></lightning-icon>
+                                <span class="slds-m-left_x-small">YouTube</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="#instagram"
+                                class="portal-footer__link portal-footer__icon-link"
+                                aria-label="Visit us on Instagram"
+                            >
+                                <lightning-icon
+                                    icon-name="utility:photo"
+                                    size="x-small"
+                                    alternative-text=""
+                                ></lightning-icon>
+                                <span class="slds-m-left_x-small">Instagram</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <p class="portal-footer__accred slds-m-top_medium">
+                        <lightning-icon
+                            icon-name="utility:shield"
+                            size="x-small"
+                            alternative-text=""
+                            class="slds-m-right_x-small"
+                        ></lightning-icon>
+                        NABH accredited · ISO 27001 certified
+                    </p>
+                </div>
+            </div>
+
+            <div class="portal-footer__bottom slds-text-align_center slds-p-vertical_small">
+                <small>
+                    &copy; {brandName}. All rights reserved. ·
+                    <a href="#sitemap" class="portal-footer__link portal-footer__link_inline"
+                        >Sitemap</a
+                    >
+                    ·
+                    <a
+                        href="#cookies"
+                        class="portal-footer__link portal-footer__link_inline"
+                        >Cookie Settings</a
+                    >
+                </small>
+            </div>
+        </footer>
+    </div>
+</template>

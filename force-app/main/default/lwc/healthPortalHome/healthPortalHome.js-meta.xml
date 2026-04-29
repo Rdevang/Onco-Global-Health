@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Health Portal Home</masterLabel>
+    <description>Digital Front Door home page for Experience Cloud guest users. Provides hero search, quick-action cards, and an Agentforce health-assistant launcher.</description>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property
+                name="brandName"
+                label="Brand name"
+                type="String"
+                default="Onco Global Health"
+                description="Display name shown in the header logo and footer."/>
+            <property
+                name="emergencyPhone"
+                label="Emergency / Urgent Care phone"
+                type="String"
+                default="+1-800-911-CARE"
+                description="Phone number for the always-visible Emergency / Urgent Care call-to-action."/>
+            <property
+                name="agentLaunchUrl"
+                label="Agentforce launch URL"
+                type="String"
+                default=""
+                description="Optional URL for launching the embedded Agentforce health assistant (Messaging for Web deployment URL or Experience site path)."/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>
