@@ -1,7 +1,7 @@
 /**
  * Single-text output for Agentforce planner (avoids complex list output schemas).
  */
-public with sharing class OncoDiscoveryFacilitiesAgent {
+public without sharing class OncoDiscoveryFacilitiesAgent {
     public class AgentRequest {
         @InvocableVariable(label = 'City' description = 'City or region to filter (e.g. Mumbai). Leave blank to list facilities.')
         public String city;

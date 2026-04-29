@@ -1,7 +1,7 @@
 /**
  * SOSL wrapper over Knowledge__kav for Agentforce / Flow retrieval.
  */
-public with sharing class OncoKnowledgeService {
+public without sharing class OncoKnowledgeService {
     public class SearchRequest {
         @InvocableVariable(required=true label='Search Text')
         public String queryText;

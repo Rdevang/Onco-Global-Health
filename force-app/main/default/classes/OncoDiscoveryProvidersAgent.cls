@@ -1,7 +1,7 @@
 /**
  * Text output for Agentforce planner; wraps OncoDiscoveryProviders.findProviders.
  */
-public with sharing class OncoDiscoveryProvidersAgent {
+public without sharing class OncoDiscoveryProvidersAgent {
     public class AgentRequest {
         @InvocableVariable(label = 'Specialty' description = 'e.g. Medical Oncology, Pediatric Oncology')
         public String specialty;

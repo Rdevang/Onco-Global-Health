@@ -1,4 +1,4 @@
-public with sharing class OncoDiscoveryFacilities {
+public without sharing class OncoDiscoveryFacilities {
     public class FindFacilitiesRequest {
         @InvocableVariable(label='City')
         public String city;

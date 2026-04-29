@@ -2,7 +2,7 @@
  * Deterministic slot generation aligned with Onco seed OperatingHours (Mon–Sat 09:00–18:00 Asia/Kolkata).
  * Does not call Salesforce Scheduler REST — suitable for demos and Agentforce actions.
  */
-public with sharing class OncoSchedulerGateway {
+public without sharing class OncoSchedulerGateway {
     public static final String TERRITORY_NAME_PREFIX = 'Onco Territory - ';
     /** Maximum search window per request (days). */
     public static final Integer MAX_RANGE_DAYS = 14;

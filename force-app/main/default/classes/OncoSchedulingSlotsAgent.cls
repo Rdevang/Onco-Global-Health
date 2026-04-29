@@ -2,7 +2,7 @@
  * Text output for Agentforce planner; wraps OncoSchedulingGetSlots.getAvailableSlots.
  * Defaults: from = now UTC, to = now + 14 days UTC, timezone Asia/Kolkata for slot labels.
  */
-public with sharing class OncoSchedulingSlotsAgent {
+public without sharing class OncoSchedulingSlotsAgent {
     private static final String DEFAULT_WORK_TYPE_NAME = 'Onco New Consult';
 
     public class AgentRequest {

@@ -1,7 +1,7 @@
 /**
  * Text output for Agentforce planner; wraps OncoKnowledgeService.searchKnowledge (SOSL fallback).
  */
-public with sharing class OncoKnowledgeSearchAgent {
+public without sharing class OncoKnowledgeSearchAgent {
     public class AgentRequest {
         @InvocableVariable(required = true label = 'Search Text' description = 'Keywords for Knowledge article search.')
         public String queryText;

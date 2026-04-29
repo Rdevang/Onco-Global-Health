@@ -2,7 +2,7 @@
  * Resolves Person Account (and optional Person Contact) from email for Agent / Experience callers
  * without requiring Salesforce record Ids from end users.
  */
-public with sharing class OncoPatientEmailLookup {
+public without sharing class OncoPatientEmailLookup {
     public class PersonMatch {
         public Id accountId;
         public Id personContactId;

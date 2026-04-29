@@ -2,7 +2,7 @@
  * Resolves the running Experience Cloud / community user to a patient Account (Person or business patient).
  * Used by flows and Agentforce actions that need "current patient" context.
  */
-public with sharing class OncoPatientContext {
+public without sharing class OncoPatientContext {
     public class PatientContextResult {
         @InvocableVariable(label='Patient Account Id')
         public Id accountId;
