@@ -228,6 +228,10 @@
     font-size: 1.05rem;
 }
 
+.portal-search-wrap {
+    display: block;
+    background: transparent;
+}
 .portal-search {
     display: flex;
     align-items: center;
@@ -247,9 +251,11 @@
     display: block;
 }
 .portal-search__help {
+    background: transparent;
     color: rgba(255, 255, 255, 0.85);
     font-size: 0.85rem;
-    margin: 0.5rem 0 0;
+    margin: 0.75rem 0 0;
+    padding: 0;
     max-width: 44rem;
 }
 .portal-search__btn {

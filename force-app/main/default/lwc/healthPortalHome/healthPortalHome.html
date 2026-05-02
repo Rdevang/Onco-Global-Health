@@ -116,42 +116,44 @@
                         network of specialists, in seconds. No phone trees. No paperwork mountain.
                     </p>
 
-                    <form
-                        class="portal-search"
-                        onsubmit={handleSearchSubmit}
-                        role="search"
-                        aria-label="Find a provider or clinic"
-                    >
-                        <div class="portal-search__field">
-                            <lightning-input
-                                data-id="hero-search"
-                                type="search"
-                                label="Search providers, clinics, or specialties"
-                                variant="label-hidden"
-                                placeholder="Search providers, clinics, or specialties..."
-                                value={searchTerm}
-                                onchange={handleSearchChange}
-                                aria-describedby="portal-search-help"
-                            ></lightning-input>
-                        </div>
-                        <button
-                            type="submit"
-                            class="slds-button slds-button_brand portal-search__btn"
-                            aria-label="Search providers, clinics, or specialties"
+                    <div class="portal-search-wrap">
+                        <form
+                            class="portal-search"
+                            onsubmit={handleSearchSubmit}
+                            role="search"
+                            aria-label="Find a provider or clinic"
                         >
-                            <lightning-icon
-                                icon-name="utility:search"
-                                size="x-small"
-                                variant="inverse"
-                                alternative-text=""
-                                class="slds-m-right_x-small"
-                            ></lightning-icon>
-                            Search
-                        </button>
-                    </form>
-                    <p id="portal-search-help" class="portal-search__help">
-                        Try a doctor's name, a city, or a specialty (e.g. "Medical Oncology").
-                    </p>
+                            <div class="portal-search__field">
+                                <lightning-input
+                                    data-id="hero-search"
+                                    type="search"
+                                    label="Search providers, clinics, or specialties"
+                                    variant="label-hidden"
+                                    placeholder="Search providers, clinics, or specialties..."
+                                    value={searchTerm}
+                                    onchange={handleSearchChange}
+                                    aria-describedby="portal-search-help"
+                                ></lightning-input>
+                            </div>
+                            <button
+                                type="submit"
+                                class="slds-button slds-button_brand portal-search__btn"
+                                aria-label="Search providers, clinics, or specialties"
+                            >
+                                <lightning-icon
+                                    icon-name="utility:search"
+                                    size="x-small"
+                                    variant="inverse"
+                                    alternative-text=""
+                                    class="slds-m-right_x-small"
+                                ></lightning-icon>
+                                Search
+                            </button>
+                        </form>
+                        <p id="portal-search-help" class="portal-search__help">
+                            Try a doctor's name, a city, or a specialty (for example, "Medical Oncology").
+                        </p>
+                    </div>
 
                     <div
                         class="portal-quick-filters slds-m-top_medium"
