@@ -117,12 +117,12 @@
                     </p>
 
                     <form
-                        class="portal-search slds-grid slds-grid_vertical-align-end slds-wrap"
+                        class="portal-search"
                         onsubmit={handleSearchSubmit}
                         role="search"
                         aria-label="Find a provider or clinic"
                     >
-                        <div class="portal-search__field slds-col slds-grow">
+                        <div class="portal-search__field">
                             <lightning-input
                                 data-id="hero-search"
                                 type="search"
@@ -133,30 +133,25 @@
                                 onchange={handleSearchChange}
                                 aria-describedby="portal-search-help"
                             ></lightning-input>
-                            <p
-                                id="portal-search-help"
-                                class="slds-form-element__help portal-search__help"
-                            >
-                                Try a doctor's name, a city, or a specialty (e.g. "Medical Oncology").
-                            </p>
                         </div>
-                        <div class="portal-search__submit slds-col slds-no-flex slds-p-left_small">
-                            <button
-                                type="submit"
-                                class="slds-button slds-button_brand portal-search__btn"
-                                aria-label="Search providers, clinics, or specialties"
-                            >
-                                <lightning-icon
-                                    icon-name="utility:search"
-                                    size="x-small"
-                                    variant="inverse"
-                                    alternative-text=""
-                                    class="slds-m-right_x-small"
-                                ></lightning-icon>
-                                Search
-                            </button>
-                        </div>
+                        <button
+                            type="submit"
+                            class="slds-button slds-button_brand portal-search__btn"
+                            aria-label="Search providers, clinics, or specialties"
+                        >
+                            <lightning-icon
+                                icon-name="utility:search"
+                                size="x-small"
+                                variant="inverse"
+                                alternative-text=""
+                                class="slds-m-right_x-small"
+                            ></lightning-icon>
+                            Search
+                        </button>
                     </form>
+                    <p id="portal-search-help" class="portal-search__help">
+                        Try a doctor's name, a city, or a specialty (e.g. "Medical Oncology").
+                    </p>
 
                     <div
                         class="portal-quick-filters slds-m-top_medium"
