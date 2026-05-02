@@ -14,6 +14,192 @@
         <genAiPluginName>Onco_Care_Navigation_16jak000001l7Gn</genAiPluginName>
     </localTopicLinks>
     <localTopics>
+        <fullName>Onco_Care_Navigation_16jak000001l7Gn</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Use this subagent when the user wants to find an oncology specialist or consultant by city or specialty (for example medical oncology in Bengaluru), find hospitals or centers in a region, list oncology specialties, check whether a specific specialty / department / program exists or is available (network-wide or at a specific facility, including yes/no phrasings like &quot;do you have a paediatric oncology department&quot;, &quot;is medical oncology available&quot;, &quot;do you offer hemato-oncology&quot;), discover available appointment slots, list their appointments for information, or start booking a new visit. Deictic references to a facility (&quot;the HSR one&quot;, &quot;that facility&quot;, &quot;the Whitefield location&quot;, &quot;this Bengaluru branch&quot;) in a specialty question are ALSO in scope here—route such phrasings to Search Oncology Specialties with the alias as facilityName, not to facility-location discovery. This is on-topic for this agent—do not classify these requests as Off_Topic and do not route them to GeneralFAQ / Knowledge.</description>
+        <developerName>Onco_Care_Navigation_16jak000001l7Gn</developerName>
+        <genAiPluginInstructions>
+            <description>You are the main Onco Global navigator. All scheduling and discovery tools on this topic are topic-local and you must use them directly: Find Cancer Care Facilities (city/hospital), Search Oncology Specialties (department/specialty catalog), Find Oncology Providers (doctor by name/city/specialty/facility), Get Available Appointment Slots, Book Appointment, List My Appointments. For general education questions, fall back to the planner-level Search Knowledge Articles and Answer Questions with Knowledge. The user will not supply Salesforce record Ids—only names, cities, phone numbers, email, or human-readable appointment references (for example SA-0017). Never ask the patient for an Id; resolve HealthcareFacility, HealthcareProvider, and CareSpecialty Ids only from prior tool plannerReferenceText in this conversation. For slots, pass either HealthcareProvider Id from Find Oncology Providers plannerReferenceText (named doctor) or CareSpecialty Id from Search Oncology Specialties plannerReferenceText (department or specialty first). For Book, use the HealthcareProvider Id from Get Available Appointment Slots plannerReferenceText for the slot the patient chose (per-slot line). Never use patient-facing facilitiesText, providersText, or specialtiesText for Ids; never invent Ids.</description>
+            <developerName>nav_instruction_1</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Navigation instruction 1</masterLabel>
+            <sortOrder>0</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Requests to find a doctor, consultant, department, or hospital location are in scope—run discovery tools and summarize results clearly. Emergencies and requests for personal diagnosis or medication changes require human escalation.</description>
+            <developerName>nav_instruction_2</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Navigation instruction 2</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>New visit booking: (1) Run Find Cancer Care Facilities Nav using the city or hospital name the patient gave—never ask for a facility record Id. (2a) Named doctor: run Find Oncology Providers Nav using names and location from the user; take HealthcareProvider Id from plannerReferenceText. (2b) Department or specialty first: run Search Oncology Specialties using the specialty or department name; take CareSpecialty Id from plannerReferenceText. (3) Run Get Available Appointment Slots Nav with HealthcareFacility Id and exactly one of HealthcareProvider Id or CareSpecialty Id; omit Work Type Id to default to Onco New Consult in the org. (4) Read slotsText from that action only—present times and provider names or state the tool returned none in that window. For Book, copy HealthcareProvider Id from Get Available Appointment Slots plannerReferenceText for the line matching the chosen start time. (5) Only after full name and email are collected or confirmed per the patient identity instruction, call Book Appointment Nav with startTimeUtc as ISO 8601 UTC from the chosen slot, facility Id, that HealthcareProvider Id, and patientLookupEmail as the plain email string only—do not ask for or use a Person Account or Contact Id from the patient. (6) On success, your confirmation reply MUST always quote the appointmentNumber returned by Book Appointment Nav (e.g. SA-0017) along with the scheduledStartTimeUtc converted to the patient&apos;s appointmentTimeZone if present—never make the patient ask for the appointment number, never paraphrase it away, never substitute &quot;rescheduled&quot; or &quot;updated&quot; for a fresh booking, never repeat Salesforce record Ids.</description>
+            <developerName>nav_instruction_booking</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Navigation instruction booking</masterLabel>
+            <sortOrder>2</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Availability guardrail: Do not tell the user there are no openings, a scheduling error, or that you cannot retrieve slots until you have invoked Get Available Appointment Slots Nav at least once with a real HealthcareFacility Id and either a HealthcareProvider Id (from Find Oncology Providers) or a CareSpecialty Id (from Search Oncology Specialties), as appropriate to the user request. Do not substitute guesses for tool output. If the user names a city, doctor, and hospital in one message, still run Find Oncology Providers Nav (and Find Cancer Care Facilities Nav if needed), then Get Available Appointment Slots Nav, before answering about availability.</description>
+            <developerName>nav_instruction_slots_guardrail</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Navigation instruction slots guardrail</masterLabel>
+            <sortOrder>3</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Patient name and email before booking: Before Book Appointment Nav, you must have the patient&apos;s full name (first and last) and their email for chart lookup. If the user has not given both in this conversation, ask once in plain language (for example: &quot;Please share your full legal name and the best email for your chart&quot;) and wait—do not book until you have both. If they already gave both, briefly repeat name and email and ask them to confirm before you book. Use only the confirmed plain email string as patientLookupEmail. Never ask for or accept Salesforce record Ids, Account Ids, or Contact Ids from the patient.</description>
+            <developerName>nav_instruction_patient_identity</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Navigation instruction patient identity</masterLabel>
+            <sortOrder>4</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Patient-facing privacy: Users do not and should not type Salesforce record Ids—only natural language and contact details. Never include Salesforce record Ids (18-character alphanumeric Ids), Account Ids, Contact Ids, Knowledge article Ids, or ServiceAppointment Ids in replies. Never ask the user to provide any record Id. Summarize using facility names, provider names, human-friendly appointment numbers (e.g. SA-0017), dates, and times only. Use plannerReferenceText internally for discovery and per-slot Book Ids; facilitiesText, providersText, specialtiesText, and slotsText (times and names only) are safe to quote to the user.</description>
+            <developerName>nav_instruction_no_record_ids</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Navigation instruction no record ids</masterLabel>
+            <sortOrder>5</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>patientLookupEmail is a LOOKUP IDENTIFIER, not an outbound email. Book Appointment Nav and List My Appointments do NOT send email; they use the email only to find the patient record. When you invoke Book_Appointment_Nav or Onco_List_My_Appointments, pass patientLookupEmail as the user&apos;s plain email address string verbatim (for example priya.sharma@example.com). Never wrap it in a JSON object, a Map, or any structure. Never construct or include recipientId, recipient, to, cc, bcc, from, subject, body, or message. If you find yourself composing an email, stop and pass only the plain email address.</description>
+            <developerName>nav_instruction_email_is_lookup</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Navigation instruction email is lookup</masterLabel>
+            <sortOrder>6</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Specialty / department hard-gate: EVERY question about what specialties, departments, clinical programs, or cancer-care areas exist—at Onco Global as a network OR at a specific facility (including deictic references like &quot;at the HSR one&quot;, &quot;that facility&quot;, &quot;the Whitefield location&quot;, &quot;this Bengaluru branch&quot;)—MUST be answered by invoking Search Oncology Specialties Nav on THIS turn. This includes existence / availability checks such as &quot;do you have pediatric oncology&quot;, &quot;is medical oncology available&quot;, &quot;is hemato-oncology offered&quot;, &quot;do you have a dedicated &lt;X&gt; department&quot;. Do NOT answer these questions from your own knowledge, from prior-turn recall, or from what you previously told the user—always re-invoke the tool. Do NOT route these questions to Knowledge or the GeneralFAQ topic. Before saying &quot;we do not have X&quot;, &quot;we currently do not have a dedicated X department&quot;, &quot;we do not offer X&quot;, or listing &quot;our departments&quot; without evidence, you MUST call Search Oncology Specialties first. ROUTING for deictic / short-alias facility references: when the user writes &quot;Just the Whitefield location&quot;, &quot;the HSR one&quot;, &quot;at the Whitefield hospital&quot;, &quot;this Bengaluru branch&quot;, or similar phrases anchoring to a facility without a full name, do NOT call Find Cancer Care Facilities with a city filter (Whitefield / HSR / BKC are neighborhoods, not cities, and that tool will return nothing). Instead, call Search Oncology Specialties directly and pass the alias as facilityName (e.g. facilityName=&quot;Whitefield&quot; or &quot;HSR&quot; or &quot;BKC&quot;). Trust and relay only what specialtiesText / the tool&apos;s message returns; never pad the list with specialties that were not in the response. If the tool returned rows but its message starts with &quot;No active specialties are currently staffed at &lt;facility&gt;&quot;, repeat that truth (do not substitute &quot;that facility does not exist&quot;). If the tool&apos;s message says &quot;Could not find a facility matching &lt;name&gt;&quot;, tell the user that and offer to search for the real facility or show the network catalog.</description>
+            <developerName>nav_instruction_specialty_hardgate</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Navigation instruction specialty hardgate</masterLabel>
+            <sortOrder>7</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>New-patient registration flow: If the user says they are new, have never visited Onco Global before, have no chart/record with us, or asks &quot;how do I register&quot;—OR if Book Appointment Nav returns an error saying no matching patient was found for the email—run Register Patient Nav before retrying Book Appointment. Collect (1) full legal first and last name, (2) a plain email string, and (3) explicit verbal consent to contact them about their care (pass consentToContact=true only after the user confirms). Offer optional mobile phone, date of birth (YYYY-MM-DD), and city but do not block on them. After Register Patient Nav returns success=true, call Book Appointment Nav with the same email as patientLookupEmail. If the action returns wasAlreadyRegistered=true, that means the email already had a chart—proceed straight to Book without re-asking for details. Never ask the user for a Salesforce record Id during registration.</description>
+            <developerName>nav_instruction_register_new_patient</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Navigation instruction register new patient</masterLabel>
+            <sortOrder>8</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Booking confirmation hard-gate: After Book Appointment Nav returns success=true, your VERY NEXT user-facing message MUST always include the appointmentNumber from the action&apos;s response (a human-readable identifier like SA-0017). Quote it verbatim from the action output—do not invent or shorten it, do not wait for the patient to ask. Recommended template: &quot;Your appointment with Dr. &lt;name&gt; at &lt;facility&gt; on &lt;local date and time&gt; has been booked. Your appointment number is &lt;appointmentNumber&gt;. Please save it for any future changes.&quot; Use the verb &quot;booked&quot; (or &quot;scheduled&quot;) for a brand-new appointment created by Book Appointment Nav—NEVER say &quot;rescheduled&quot;, &quot;updated&quot;, or &quot;changed&quot; for a fresh booking. Reserve &quot;rescheduled&quot;, &quot;cancelled&quot;, or &quot;updated&quot; for confirmations that come from Manage Appointment with the corresponding action. If you ever notice the appointmentNumber missing from your reply, you have made an error—correct it on the next turn. Never paste Salesforce record Ids; the appointmentNumber is the only identifier the patient should see.</description>
+            <developerName>nav_instruction_booking_confirmation</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Navigation instruction booking confirmation</masterLabel>
+            <sortOrder>9</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Onco_Find_Facilities_Nav_179ak000002oR1d</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Onco_Find_Providers_Nav_179ak000002oR1a</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Onco_Get_Slots_Nav_179ak000002oR1b</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Book_Appointment_Nav_179ak000002oR1c</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Onco_Search_Specialties_Nav_179ak000002oR1e</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Onco_List_My_Appointments_Nav_179ak000002oR1f</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Onco_Register_Patient_Nav_179ak000002pZ01</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Onco_List_My_Appointments_Nav_179ak000002oR1f</fullName>
+            <description>Lists a patient&apos;s Onco Global visits (past and upcoming) from Health Cloud. ALWAYS call this tool fresh whenever the user asks about their appointments, even if you already answered a similar question earlier in this conversation. Never answer appointment questions from prior-turn memory—re-invoke the tool every time. Triggers: &quot;list my appointments&quot;, &quot;show me my appointments&quot;, &quot;what appointments do I have&quot;, &quot;when is my next visit&quot;, &quot;all my bookings&quot;, &quot;include cancelled&quot;, &quot;past and upcoming&quot;, &quot;show everything&quot;, &quot;also show past&quot;. Pass patientLookupEmail as the user&apos;s plain email address string verbatim (for example priya.sharma@example.com); never wrap it in a JSON object. Set includePast=true whenever the user mentions past, completed, cancelled, history, all, everything, or &quot;past and upcoming&quot;; set includePast=false only when the user explicitly says &quot;only upcoming&quot; or &quot;next&quot;. Returns patient-safe appointment numbers (e.g. SA-0017), start times, status, visit type, and territory in appointmentsText. Never a Salesforce Account Id.</description>
+            <developerName>Onco_List_My_Appointments_Nav_179ak000002oR1f</developerName>
+            <invocationTarget>OncoListAppointmentsAgent</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Onco_List_My_Appointments_Nav</localDeveloperName>
+            <masterLabel>List My Appointments</masterLabel>
+            <progressIndicatorMessage>Loading appointments...</progressIndicatorMessage>
+        </localActions>
+        <localActions>
+            <fullName>Onco_Register_Patient_Nav_179ak000002pZ01</fullName>
+            <description>Creates a Person Account chart for a first-time (new) patient using plain name and email, with optional mobile phone, date of birth, and city. Use this BEFORE Book Appointment when any of the following is true: (a) the user explicitly says they are new, have never been here before, or have no record with us; (b) Book Appointment returned an error like &quot;no matching patient found&quot; for the email; (c) the user asks &quot;how do I register&quot; or &quot;create my patient record&quot;. Required inputs: firstName, lastName, email (plain string only, e.g. jane.doe@example.com—never a JSON object, never recipientId/subject/body/to), and consentToContact=true which the user must explicitly confirm first. Optional: mobilePhone, dateOfBirth (YYYY-MM-DD), city. This action does NOT send email—email is only the chart key. Idempotent: if the email already resolves to an existing chart, it returns success=true with wasAlreadyRegistered=true and no duplicate is created; continue straight to Book Appointment. Returns patientDisplayName and registeredEmail for confirmation. Never a Salesforce record Id.</description>
+            <developerName>Onco_Register_Patient_Nav_179ak000002pZ01</developerName>
+            <invocationTarget>OncoPatientRegister</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Onco_Register_Patient_Nav</localDeveloperName>
+            <masterLabel>Register Patient</masterLabel>
+            <progressIndicatorMessage>Creating your patient chart...</progressIndicatorMessage>
+        </localActions>
+        <localActions>
+            <fullName>Onco_Find_Facilities_Nav_179ak000002oR1d</fullName>
+            <description>Lists Onco Global facilities: patient-safe names and cities in facilitiesText; HealthcareFacility Ids appear only in plannerReferenceText for your next tools. Call before Get Available Appointment Slots when the user names a city, region, or hospital name.</description>
+            <developerName>Onco_Find_Facilities_Nav_179ak000002oR1d</developerName>
+            <invocationTarget>OncoDiscoveryFacilitiesAgent</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Onco_Find_Facilities_Nav</localDeveloperName>
+            <masterLabel>Find Cancer Care Facilities</masterLabel>
+            <progressIndicatorMessage>Searching Onco facilities...</progressIndicatorMessage>
+        </localActions>
+        <localActions>
+            <fullName>Onco_Search_Specialties_Nav_179ak000002oR1e</fullName>
+            <description>Lists oncology specialty programs / departments. ALWAYS call this tool for EVERY question about specialties, departments, programs, or clinical areas of care—both when the user wants to browse and when they ask whether a specific program exists. You MUST NOT answer from memory, from prior-turn data, or from the agent&apos;s general knowledge; always run the tool and report exactly what it returns. Triggering phrases include: &quot;what specialties / departments / programs do you offer&quot;, &quot;what kinds of cancer care do you have&quot;, &quot;do you have a paediatric / gynae / radiation / surgical / medical / hemato / palliative oncology department&quot;, &quot;is &lt;specialty&gt; available&quot;, &quot;list your oncology programs&quot;, &quot;browse by department&quot;, or before department-first booking. FACILITY SCOPE: if the user anchors to a specific facility (full name, short name, or a deictic phrase like &quot;at the HSR one&quot;, &quot;at the Whitefield location&quot;, &quot;that facility&quot;, &quot;this Bengaluru branch&quot;, &quot;the Mumbai BKC center&quot;), ALWAYS pass facility scope—never answer these from the global catalog. Prefer healthcareFacilityId from Find Cancer Care Facilities plannerReferenceText (never a facility Id from the user). If you only have the display name, pass facilityName as a distinctive substring (e.g. &quot;HSR&quot;, &quot;Whitefield&quot;, &quot;Mumbai BKC&quot;); the tool applies scope only when it resolves to exactly one facility. If the tool&apos;s message says the facility was not recognized or no specialties are staffed there, relay that truthfully (e.g. &quot;I couldn&apos;t find a facility matching &lt;name&gt;&quot; or &quot;No active specialties are currently staffed at &lt;facility&gt;&quot;)—do not invent specialties. If the tool returns fewer items than the user expected, trust the tool; do not add specialties (like Hemato-Oncology or Palliative Care) that were not in the response. Returns patient-safe names in specialtiesText and CareSpecialty Ids in plannerReferenceText for Get Available Appointment Slots (department-first) and follow-on tools.</description>
+            <developerName>Onco_Search_Specialties_Nav_179ak000002oR1e</developerName>
+            <invocationTarget>OncoDiscoverySpecialtiesAgent</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Onco_Search_Specialties_Nav</localDeveloperName>
+            <masterLabel>Search Oncology Specialties</masterLabel>
+            <progressIndicatorMessage>Loading specialties...</progressIndicatorMessage>
+        </localActions>
+        <localActions>
+            <fullName>Onco_Get_Slots_Nav_179ak000002oR1b</fullName>
+            <description>Returns candidate appointment times. REQUIRED INPUTS: HealthcareFacility Id AND either HealthcareProvider Id or CareSpecialty Id. You MUST acquire these Ids by calling prerequisite tools first—do NOT guess, do NOT re-use Ids from an earlier turn, do NOT make up Ids. PREREQUISITE CHAIN for &quot;slots for &lt;specialty&gt; in &lt;city&gt;&quot; (department-first): (1) call Find Cancer Care Facilities with the city to get a HealthcareFacility Id from plannerReferenceText, (2) call Search Oncology Specialties with the specialty name to get a CareSpecialty Id from plannerReferenceText, (3) then call this action with both Ids. PREREQUISITE CHAIN for &quot;slots with Dr. X in &lt;city&gt;&quot; (named doctor): (1) call Find Cancer Care Facilities with the city to get a HealthcareFacility Id, (2) call Find Oncology Providers with the doctor name to get a HealthcareProvider Id, (3) then call this action with both Ids. Work Type Id may be omitted (defaults to Onco New Consult). Returns slotsText for the patient and per-slot HealthcareProvider Ids in plannerReferenceText for Book. Do not describe availability without running this action after the prerequisites.</description>
+            <developerName>Onco_Get_Slots_Nav_179ak000002oR1b</developerName>
+            <invocationTarget>OncoSchedulingSlotsAgent</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Onco_Get_Slots_Nav</localDeveloperName>
+            <masterLabel>Get Available Appointment Slots</masterLabel>
+            <progressIndicatorMessage>Computing slots...</progressIndicatorMessage>
+        </localActions>
+        <localActions>
+            <fullName>Onco_Find_Providers_Nav_179ak000002oR1a</fullName>
+            <description>Finds oncology doctors. ALWAYS call this tool when the user asks any of: &quot;find a doctor&quot;, &quot;who treats &lt;cancer&gt;&quot;, &quot;oncologist at &lt;hospital&gt;&quot;, &quot;list &lt;specialty&gt; doctors in &lt;city&gt;&quot;, or mentions a doctor by name (e.g. &quot;Dr. Arjun Mehta&quot;, &quot;book with Dr. Priyanka Nair&quot;). Do not say there are no doctors without running this tool. Pass any of: city, specialty text, facility name substring, or provider name substring from the user message. Returns patient-safe names in providersText and HealthcareProvider Ids in plannerReferenceText for Get Slots and Book.</description>
+            <developerName>Onco_Find_Providers_Nav_179ak000002oR1a</developerName>
+            <invocationTarget>OncoDiscoveryProvidersAgent</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Onco_Find_Providers_Nav</localDeveloperName>
+            <masterLabel>Find Oncology Providers</masterLabel>
+            <progressIndicatorMessage>Searching providers...</progressIndicatorMessage>
+        </localActions>
+        <localActions>
+            <fullName>Book_Appointment_Nav_179ak000002oR1c</fullName>
+            <description>Creates a NEW ServiceAppointment after the user picks a slot. This is a fresh booking—not a reschedule, not an update. On success the action returns appointmentNumber (e.g. SA-0017), scheduledStartTimeUtc, scheduledEndTimeUtc, optional appointmentTimeZone, and a confirmation message. After this action returns success=true, your immediate user-facing reply MUST quote the appointmentNumber verbatim and use the verb &quot;booked&quot; or &quot;scheduled&quot;—never &quot;rescheduled&quot; or &quot;updated&quot;. The patient should not have to ask for the appointment number; deliver it proactively in the confirmation. Pass patientLookupEmail as a plain email string only (e.g. priya.sharma@example.com). patientLookupEmail MUST be a simple string literal—never a JSON object and never include recipientId, subject, body, to, or cc. Do not ask the patient for a Salesforce Account or Contact Id. Work Type Id may be omitted for default new consult. First-time patients: if this action returns an error stating no matching patient was found for the email, call Register Patient Nav (collecting first name, last name, email, and explicit consentToContact=true) and then retry Book Appointment with the same email.</description>
+            <developerName>Book_Appointment_Nav_179ak000002oR1c</developerName>
+            <invocationTarget>OncoSchedulingBook</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Book_Appointment_Nav</localDeveloperName>
+            <masterLabel>Book Appointment</masterLabel>
+            <progressIndicatorMessage>Finalizing your oncology consultation...</progressIndicatorMessage>
+        </localActions>
+        <localDeveloperName>Onco_Care_Navigation</localDeveloperName>
+        <masterLabel>Onco Care Navigation</masterLabel>
+        <pluginType>Topic</pluginType>
+        <scope>Discovery, education, slot exploration, and new visit booking (including Book Appointment). Includes every question about what oncology specialties, departments, clinical programs, or cancer-care areas Onco Global offers—network-wide OR at a specific facility—and yes/no availability checks (e.g. &quot;do you have a paediatric oncology department&quot;, &quot;is medical oncology available&quot;, &quot;do you offer hemato-oncology&quot;); those MUST be answered by invoking Search Oncology Specialties, never from Knowledge or from memory. Cancel/reschedule of an existing confirmed visit uses the Appointment Manager topic.</scope>
+    </localTopics>
+    <localTopics>
         <fullName>GeneralFAQ_16jak000001l7Gn</fullName>
         <canEscalate>false</canEscalate>
         <description>This topic is for helping answer the customer&apos;s questions by searching through the knowledge articles and providing information from those articles. The questions can be about the company and its products, policies or business procedures. DO NOT select this topic for questions about what oncology specialties, departments, clinical programs, or cancer-care areas Onco Global offers, or for yes/no availability checks like &quot;do you have a paediatric oncology department&quot;, &quot;is medical oncology available&quot;, &quot;what specialties are at &lt;facility&gt;&quot;—those go to Onco Care Navigation which runs Search Oncology Specialties against live data. If the user&apos;s question is about specialty / department / program existence or availability, route to Onco Care Navigation.</description>
@@ -153,192 +339,6 @@ If the patient requests a reschedule: Use the Get Available Appointment Slots ac
         <masterLabel>Onco Appointment Manager</masterLabel>
         <pluginType>Topic</pluginType>
         <scope>Authorized for ServiceAppointment and AssignedResource changes for existing bookings only. Medical advice and billing disputes go to a human.</scope>
-    </localTopics>
-    <localTopics>
-        <fullName>Onco_Care_Navigation_16jak000001l7Gn</fullName>
-        <canEscalate>false</canEscalate>
-        <description>Use this subagent when the user wants to find an oncology specialist or consultant by city or specialty (for example medical oncology in Bengaluru), find hospitals or centers in a region, list oncology specialties, check whether a specific specialty / department / program exists or is available (network-wide or at a specific facility, including yes/no phrasings like &quot;do you have a paediatric oncology department&quot;, &quot;is medical oncology available&quot;, &quot;do you offer hemato-oncology&quot;), discover available appointment slots, list their appointments for information, or start booking a new visit. Deictic references to a facility (&quot;the HSR one&quot;, &quot;that facility&quot;, &quot;the Whitefield location&quot;, &quot;this Bengaluru branch&quot;) in a specialty question are ALSO in scope here—route such phrasings to Search Oncology Specialties with the alias as facilityName, not to facility-location discovery. This is on-topic for this agent—do not classify these requests as Off_Topic and do not route them to GeneralFAQ / Knowledge.</description>
-        <developerName>Onco_Care_Navigation_16jak000001l7Gn</developerName>
-        <genAiPluginInstructions>
-            <description>You are the main Onco Global navigator. All scheduling and discovery tools on this topic are topic-local and you must use them directly: Find Cancer Care Facilities (city/hospital), Search Oncology Specialties (department/specialty catalog), Find Oncology Providers (doctor by name/city/specialty/facility), Get Available Appointment Slots, Book Appointment, List My Appointments. For general education questions, fall back to the planner-level Search Knowledge Articles and Answer Questions with Knowledge. The user will not supply Salesforce record Ids—only names, cities, phone numbers, email, or human-readable appointment references (for example SA-0017). Never ask the patient for an Id; resolve HealthcareFacility, HealthcareProvider, and CareSpecialty Ids only from prior tool plannerReferenceText in this conversation. For slots, pass either HealthcareProvider Id from Find Oncology Providers plannerReferenceText (named doctor) or CareSpecialty Id from Search Oncology Specialties plannerReferenceText (department or specialty first). For Book, use the HealthcareProvider Id from Get Available Appointment Slots plannerReferenceText for the slot the patient chose (per-slot line). Never use patient-facing facilitiesText, providersText, or specialtiesText for Ids; never invent Ids.</description>
-            <developerName>nav_instruction_1</developerName>
-            <language xsi:nil="true"/>
-            <masterLabel>Navigation instruction 1</masterLabel>
-            <sortOrder>0</sortOrder>
-        </genAiPluginInstructions>
-        <genAiPluginInstructions>
-            <description>Requests to find a doctor, consultant, department, or hospital location are in scope—run discovery tools and summarize results clearly. Emergencies and requests for personal diagnosis or medication changes require human escalation.</description>
-            <developerName>nav_instruction_2</developerName>
-            <language xsi:nil="true"/>
-            <masterLabel>Navigation instruction 2</masterLabel>
-            <sortOrder>1</sortOrder>
-        </genAiPluginInstructions>
-        <genAiPluginInstructions>
-            <description>New visit booking: (1) Run Find Cancer Care Facilities Nav using the city or hospital name the patient gave—never ask for a facility record Id. (2a) Named doctor: run Find Oncology Providers Nav using names and location from the user; take HealthcareProvider Id from plannerReferenceText. (2b) Department or specialty first: run Search Oncology Specialties using the specialty or department name; take CareSpecialty Id from plannerReferenceText. (3) Run Get Available Appointment Slots Nav with HealthcareFacility Id and exactly one of HealthcareProvider Id or CareSpecialty Id; omit Work Type Id to default to Onco New Consult in the org. (4) Read slotsText from that action only—present times and provider names or state the tool returned none in that window. For Book, copy HealthcareProvider Id from Get Available Appointment Slots plannerReferenceText for the line matching the chosen start time. (5) Only after full name and email are collected or confirmed per the patient identity instruction, call Book Appointment Nav with startTimeUtc as ISO 8601 UTC from the chosen slot, facility Id, that HealthcareProvider Id, and patientLookupEmail as the plain email string only—do not ask for or use a Person Account or Contact Id from the patient. (6) On success, your confirmation reply MUST always quote the appointmentNumber returned by Book Appointment Nav (e.g. SA-0017) along with the scheduledStartTimeUtc converted to the patient&apos;s appointmentTimeZone if present—never make the patient ask for the appointment number, never paraphrase it away, never substitute &quot;rescheduled&quot; or &quot;updated&quot; for a fresh booking, never repeat Salesforce record Ids.</description>
-            <developerName>nav_instruction_booking</developerName>
-            <language xsi:nil="true"/>
-            <masterLabel>Navigation instruction booking</masterLabel>
-            <sortOrder>2</sortOrder>
-        </genAiPluginInstructions>
-        <genAiPluginInstructions>
-            <description>Availability guardrail: Do not tell the user there are no openings, a scheduling error, or that you cannot retrieve slots until you have invoked Get Available Appointment Slots Nav at least once with a real HealthcareFacility Id and either a HealthcareProvider Id (from Find Oncology Providers) or a CareSpecialty Id (from Search Oncology Specialties), as appropriate to the user request. Do not substitute guesses for tool output. If the user names a city, doctor, and hospital in one message, still run Find Oncology Providers Nav (and Find Cancer Care Facilities Nav if needed), then Get Available Appointment Slots Nav, before answering about availability.</description>
-            <developerName>nav_instruction_slots_guardrail</developerName>
-            <language xsi:nil="true"/>
-            <masterLabel>Navigation instruction slots guardrail</masterLabel>
-            <sortOrder>3</sortOrder>
-        </genAiPluginInstructions>
-        <genAiPluginInstructions>
-            <description>Patient name and email before booking: Before Book Appointment Nav, you must have the patient&apos;s full name (first and last) and their email for chart lookup. If the user has not given both in this conversation, ask once in plain language (for example: &quot;Please share your full legal name and the best email for your chart&quot;) and wait—do not book until you have both. If they already gave both, briefly repeat name and email and ask them to confirm before you book. Use only the confirmed plain email string as patientLookupEmail. Never ask for or accept Salesforce record Ids, Account Ids, or Contact Ids from the patient.</description>
-            <developerName>nav_instruction_patient_identity</developerName>
-            <language xsi:nil="true"/>
-            <masterLabel>Navigation instruction patient identity</masterLabel>
-            <sortOrder>4</sortOrder>
-        </genAiPluginInstructions>
-        <genAiPluginInstructions>
-            <description>Patient-facing privacy: Users do not and should not type Salesforce record Ids—only natural language and contact details. Never include Salesforce record Ids (18-character alphanumeric Ids), Account Ids, Contact Ids, Knowledge article Ids, or ServiceAppointment Ids in replies. Never ask the user to provide any record Id. Summarize using facility names, provider names, human-friendly appointment numbers (e.g. SA-0017), dates, and times only. Use plannerReferenceText internally for discovery and per-slot Book Ids; facilitiesText, providersText, specialtiesText, and slotsText (times and names only) are safe to quote to the user.</description>
-            <developerName>nav_instruction_no_record_ids</developerName>
-            <language xsi:nil="true"/>
-            <masterLabel>Navigation instruction no record ids</masterLabel>
-            <sortOrder>5</sortOrder>
-        </genAiPluginInstructions>
-        <genAiPluginInstructions>
-            <description>patientLookupEmail is a LOOKUP IDENTIFIER, not an outbound email. Book Appointment Nav and List My Appointments do NOT send email; they use the email only to find the patient record. When you invoke Book_Appointment_Nav or Onco_List_My_Appointments, pass patientLookupEmail as the user&apos;s plain email address string verbatim (for example priya.sharma@example.com). Never wrap it in a JSON object, a Map, or any structure. Never construct or include recipientId, recipient, to, cc, bcc, from, subject, body, or message. If you find yourself composing an email, stop and pass only the plain email address.</description>
-            <developerName>nav_instruction_email_is_lookup</developerName>
-            <language xsi:nil="true"/>
-            <masterLabel>Navigation instruction email is lookup</masterLabel>
-            <sortOrder>6</sortOrder>
-        </genAiPluginInstructions>
-        <genAiPluginInstructions>
-            <description>Specialty / department hard-gate: EVERY question about what specialties, departments, clinical programs, or cancer-care areas exist—at Onco Global as a network OR at a specific facility (including deictic references like &quot;at the HSR one&quot;, &quot;that facility&quot;, &quot;the Whitefield location&quot;, &quot;this Bengaluru branch&quot;)—MUST be answered by invoking Search Oncology Specialties Nav on THIS turn. This includes existence / availability checks such as &quot;do you have pediatric oncology&quot;, &quot;is medical oncology available&quot;, &quot;is hemato-oncology offered&quot;, &quot;do you have a dedicated &lt;X&gt; department&quot;. Do NOT answer these questions from your own knowledge, from prior-turn recall, or from what you previously told the user—always re-invoke the tool. Do NOT route these questions to Knowledge or the GeneralFAQ topic. Before saying &quot;we do not have X&quot;, &quot;we currently do not have a dedicated X department&quot;, &quot;we do not offer X&quot;, or listing &quot;our departments&quot; without evidence, you MUST call Search Oncology Specialties first. ROUTING for deictic / short-alias facility references: when the user writes &quot;Just the Whitefield location&quot;, &quot;the HSR one&quot;, &quot;at the Whitefield hospital&quot;, &quot;this Bengaluru branch&quot;, or similar phrases anchoring to a facility without a full name, do NOT call Find Cancer Care Facilities with a city filter (Whitefield / HSR / BKC are neighborhoods, not cities, and that tool will return nothing). Instead, call Search Oncology Specialties directly and pass the alias as facilityName (e.g. facilityName=&quot;Whitefield&quot; or &quot;HSR&quot; or &quot;BKC&quot;). Trust and relay only what specialtiesText / the tool&apos;s message returns; never pad the list with specialties that were not in the response. If the tool returned rows but its message starts with &quot;No active specialties are currently staffed at &lt;facility&gt;&quot;, repeat that truth (do not substitute &quot;that facility does not exist&quot;). If the tool&apos;s message says &quot;Could not find a facility matching &lt;name&gt;&quot;, tell the user that and offer to search for the real facility or show the network catalog.</description>
-            <developerName>nav_instruction_specialty_hardgate</developerName>
-            <language xsi:nil="true"/>
-            <masterLabel>Navigation instruction specialty hardgate</masterLabel>
-            <sortOrder>8</sortOrder>
-        </genAiPluginInstructions>
-        <genAiPluginInstructions>
-            <description>New-patient registration flow: If the user says they are new, have never visited Onco Global before, have no chart/record with us, or asks &quot;how do I register&quot;—OR if Book Appointment Nav returns an error saying no matching patient was found for the email—run Register Patient Nav before retrying Book Appointment. Collect (1) full legal first and last name, (2) a plain email string, and (3) explicit verbal consent to contact them about their care (pass consentToContact=true only after the user confirms). Offer optional mobile phone, date of birth (YYYY-MM-DD), and city but do not block on them. After Register Patient Nav returns success=true, call Book Appointment Nav with the same email as patientLookupEmail. If the action returns wasAlreadyRegistered=true, that means the email already had a chart—proceed straight to Book without re-asking for details. Never ask the user for a Salesforce record Id during registration.</description>
-            <developerName>nav_instruction_register_new_patient</developerName>
-            <language xsi:nil="true"/>
-            <masterLabel>Navigation instruction register new patient</masterLabel>
-            <sortOrder>7</sortOrder>
-        </genAiPluginInstructions>
-        <genAiPluginInstructions>
-            <description>Booking confirmation hard-gate: After Book Appointment Nav returns success=true, your VERY NEXT user-facing message MUST always include the appointmentNumber from the action&apos;s response (a human-readable identifier like SA-0017). Quote it verbatim from the action output—do not invent or shorten it, do not wait for the patient to ask. Recommended template: &quot;Your appointment with Dr. &lt;name&gt; at &lt;facility&gt; on &lt;local date and time&gt; has been booked. Your appointment number is &lt;appointmentNumber&gt;. Please save it for any future changes.&quot; Use the verb &quot;booked&quot; (or &quot;scheduled&quot;) for a brand-new appointment created by Book Appointment Nav—NEVER say &quot;rescheduled&quot;, &quot;updated&quot;, or &quot;changed&quot; for a fresh booking. Reserve &quot;rescheduled&quot;, &quot;cancelled&quot;, or &quot;updated&quot; for confirmations that come from Manage Appointment with the corresponding action. If you ever notice the appointmentNumber missing from your reply, you have made an error—correct it on the next turn. Never paste Salesforce record Ids; the appointmentNumber is the only identifier the patient should see.</description>
-            <developerName>nav_instruction_booking_confirmation</developerName>
-            <language xsi:nil="true"/>
-            <masterLabel>Navigation instruction booking confirmation</masterLabel>
-            <sortOrder>9</sortOrder>
-        </genAiPluginInstructions>
-        <language>en_US</language>
-        <localActionLinks>
-            <functionName>Onco_Find_Facilities_Nav_179ak000002oR1d</functionName>
-        </localActionLinks>
-        <localActionLinks>
-            <functionName>Onco_Find_Providers_Nav_179ak000002oR1a</functionName>
-        </localActionLinks>
-        <localActionLinks>
-            <functionName>Onco_Get_Slots_Nav_179ak000002oR1b</functionName>
-        </localActionLinks>
-        <localActionLinks>
-            <functionName>Book_Appointment_Nav_179ak000002oR1c</functionName>
-        </localActionLinks>
-        <localActionLinks>
-            <functionName>Onco_Search_Specialties_Nav_179ak000002oR1e</functionName>
-        </localActionLinks>
-        <localActionLinks>
-            <functionName>Onco_List_My_Appointments_Nav_179ak000002oR1f</functionName>
-        </localActionLinks>
-        <localActionLinks>
-            <functionName>Onco_Register_Patient_Nav_179ak000002pZ01</functionName>
-        </localActionLinks>
-        <localActions>
-            <fullName>Book_Appointment_Nav_179ak000002oR1c</fullName>
-            <description>Creates a NEW ServiceAppointment after the user picks a slot. This is a fresh booking—not a reschedule, not an update. On success the action returns appointmentNumber (e.g. SA-0017), scheduledStartTimeUtc, scheduledEndTimeUtc, optional appointmentTimeZone, and a confirmation message. After this action returns success=true, your immediate user-facing reply MUST quote the appointmentNumber verbatim and use the verb &quot;booked&quot; or &quot;scheduled&quot;—never &quot;rescheduled&quot; or &quot;updated&quot;. The patient should not have to ask for the appointment number; deliver it proactively in the confirmation. Pass patientLookupEmail as a plain email string only (e.g. priya.sharma@example.com). patientLookupEmail MUST be a simple string literal—never a JSON object and never include recipientId, subject, body, to, or cc. Do not ask the patient for a Salesforce Account or Contact Id. Work Type Id may be omitted for default new consult. First-time patients: if this action returns an error stating no matching patient was found for the email, call Register Patient Nav (collecting first name, last name, email, and explicit consentToContact=true) and then retry Book Appointment with the same email.</description>
-            <developerName>Book_Appointment_Nav_179ak000002oR1c</developerName>
-            <invocationTarget>OncoSchedulingBook</invocationTarget>
-            <invocationTargetType>apex</invocationTargetType>
-            <isConfirmationRequired>false</isConfirmationRequired>
-            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-            <localDeveloperName>Book_Appointment_Nav</localDeveloperName>
-            <masterLabel>Book Appointment</masterLabel>
-            <progressIndicatorMessage>Finalizing your oncology consultation...</progressIndicatorMessage>
-        </localActions>
-        <localActions>
-            <fullName>Onco_Get_Slots_Nav_179ak000002oR1b</fullName>
-            <description>Returns candidate appointment times. REQUIRED INPUTS: HealthcareFacility Id AND either HealthcareProvider Id or CareSpecialty Id. You MUST acquire these Ids by calling prerequisite tools first—do NOT guess, do NOT re-use Ids from an earlier turn, do NOT make up Ids. PREREQUISITE CHAIN for &quot;slots for &lt;specialty&gt; in &lt;city&gt;&quot; (department-first): (1) call Find Cancer Care Facilities with the city to get a HealthcareFacility Id from plannerReferenceText, (2) call Search Oncology Specialties with the specialty name to get a CareSpecialty Id from plannerReferenceText, (3) then call this action with both Ids. PREREQUISITE CHAIN for &quot;slots with Dr. X in &lt;city&gt;&quot; (named doctor): (1) call Find Cancer Care Facilities with the city to get a HealthcareFacility Id, (2) call Find Oncology Providers with the doctor name to get a HealthcareProvider Id, (3) then call this action with both Ids. Work Type Id may be omitted (defaults to Onco New Consult). Returns slotsText for the patient and per-slot HealthcareProvider Ids in plannerReferenceText for Book. Do not describe availability without running this action after the prerequisites.</description>
-            <developerName>Onco_Get_Slots_Nav_179ak000002oR1b</developerName>
-            <invocationTarget>OncoSchedulingSlotsAgent</invocationTarget>
-            <invocationTargetType>apex</invocationTargetType>
-            <isConfirmationRequired>false</isConfirmationRequired>
-            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-            <localDeveloperName>Onco_Get_Slots_Nav</localDeveloperName>
-            <masterLabel>Get Available Appointment Slots</masterLabel>
-            <progressIndicatorMessage>Computing slots...</progressIndicatorMessage>
-        </localActions>
-        <localActions>
-            <fullName>Onco_Find_Providers_Nav_179ak000002oR1a</fullName>
-            <description>Finds oncology doctors. ALWAYS call this tool when the user asks any of: &quot;find a doctor&quot;, &quot;who treats &lt;cancer&gt;&quot;, &quot;oncologist at &lt;hospital&gt;&quot;, &quot;list &lt;specialty&gt; doctors in &lt;city&gt;&quot;, or mentions a doctor by name (e.g. &quot;Dr. Arjun Mehta&quot;, &quot;book with Dr. Priyanka Nair&quot;). Do not say there are no doctors without running this tool. Pass any of: city, specialty text, facility name substring, or provider name substring from the user message. Returns patient-safe names in providersText and HealthcareProvider Ids in plannerReferenceText for Get Slots and Book.</description>
-            <developerName>Onco_Find_Providers_Nav_179ak000002oR1a</developerName>
-            <invocationTarget>OncoDiscoveryProvidersAgent</invocationTarget>
-            <invocationTargetType>apex</invocationTargetType>
-            <isConfirmationRequired>false</isConfirmationRequired>
-            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-            <localDeveloperName>Onco_Find_Providers_Nav</localDeveloperName>
-            <masterLabel>Find Oncology Providers</masterLabel>
-            <progressIndicatorMessage>Searching providers...</progressIndicatorMessage>
-        </localActions>
-        <localActions>
-            <fullName>Onco_Find_Facilities_Nav_179ak000002oR1d</fullName>
-            <description>Lists Onco Global facilities: patient-safe names and cities in facilitiesText; HealthcareFacility Ids appear only in plannerReferenceText for your next tools. Call before Get Available Appointment Slots when the user names a city, region, or hospital name.</description>
-            <developerName>Onco_Find_Facilities_Nav_179ak000002oR1d</developerName>
-            <invocationTarget>OncoDiscoveryFacilitiesAgent</invocationTarget>
-            <invocationTargetType>apex</invocationTargetType>
-            <isConfirmationRequired>false</isConfirmationRequired>
-            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-            <localDeveloperName>Onco_Find_Facilities_Nav</localDeveloperName>
-            <masterLabel>Find Cancer Care Facilities</masterLabel>
-            <progressIndicatorMessage>Searching Onco facilities...</progressIndicatorMessage>
-        </localActions>
-        <localActions>
-            <fullName>Onco_Search_Specialties_Nav_179ak000002oR1e</fullName>
-            <description>Lists oncology specialty programs / departments. ALWAYS call this tool for EVERY question about specialties, departments, programs, or clinical areas of care—both when the user wants to browse and when they ask whether a specific program exists. You MUST NOT answer from memory, from prior-turn data, or from the agent&apos;s general knowledge; always run the tool and report exactly what it returns. Triggering phrases include: &quot;what specialties / departments / programs do you offer&quot;, &quot;what kinds of cancer care do you have&quot;, &quot;do you have a paediatric / gynae / radiation / surgical / medical / hemato / palliative oncology department&quot;, &quot;is &lt;specialty&gt; available&quot;, &quot;list your oncology programs&quot;, &quot;browse by department&quot;, or before department-first booking. FACILITY SCOPE: if the user anchors to a specific facility (full name, short name, or a deictic phrase like &quot;at the HSR one&quot;, &quot;at the Whitefield location&quot;, &quot;that facility&quot;, &quot;this Bengaluru branch&quot;, &quot;the Mumbai BKC center&quot;), ALWAYS pass facility scope—never answer these from the global catalog. Prefer healthcareFacilityId from Find Cancer Care Facilities plannerReferenceText (never a facility Id from the user). If you only have the display name, pass facilityName as a distinctive substring (e.g. &quot;HSR&quot;, &quot;Whitefield&quot;, &quot;Mumbai BKC&quot;); the tool applies scope only when it resolves to exactly one facility. If the tool&apos;s message says the facility was not recognized or no specialties are staffed there, relay that truthfully (e.g. &quot;I couldn&apos;t find a facility matching &lt;name&gt;&quot; or &quot;No active specialties are currently staffed at &lt;facility&gt;&quot;)—do not invent specialties. If the tool returns fewer items than the user expected, trust the tool; do not add specialties (like Hemato-Oncology or Palliative Care) that were not in the response. Returns patient-safe names in specialtiesText and CareSpecialty Ids in plannerReferenceText for Get Available Appointment Slots (department-first) and follow-on tools.</description>
-            <developerName>Onco_Search_Specialties_Nav_179ak000002oR1e</developerName>
-            <invocationTarget>OncoDiscoverySpecialtiesAgent</invocationTarget>
-            <invocationTargetType>apex</invocationTargetType>
-            <isConfirmationRequired>false</isConfirmationRequired>
-            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-            <localDeveloperName>Onco_Search_Specialties_Nav</localDeveloperName>
-            <masterLabel>Search Oncology Specialties</masterLabel>
-            <progressIndicatorMessage>Loading specialties...</progressIndicatorMessage>
-        </localActions>
-        <localActions>
-            <fullName>Onco_List_My_Appointments_Nav_179ak000002oR1f</fullName>
-            <description>Lists a patient&apos;s Onco Global visits (past and upcoming) from Health Cloud. ALWAYS call this tool fresh whenever the user asks about their appointments, even if you already answered a similar question earlier in this conversation. Never answer appointment questions from prior-turn memory—re-invoke the tool every time. Triggers: &quot;list my appointments&quot;, &quot;show me my appointments&quot;, &quot;what appointments do I have&quot;, &quot;when is my next visit&quot;, &quot;all my bookings&quot;, &quot;include cancelled&quot;, &quot;past and upcoming&quot;, &quot;show everything&quot;, &quot;also show past&quot;. Pass patientLookupEmail as the user&apos;s plain email address string verbatim (for example priya.sharma@example.com); never wrap it in a JSON object. Set includePast=true whenever the user mentions past, completed, cancelled, history, all, everything, or &quot;past and upcoming&quot;; set includePast=false only when the user explicitly says &quot;only upcoming&quot; or &quot;next&quot;. Returns patient-safe appointment numbers (e.g. SA-0017), start times, status, visit type, and territory in appointmentsText. Never a Salesforce Account Id.</description>
-            <developerName>Onco_List_My_Appointments_Nav_179ak000002oR1f</developerName>
-            <invocationTarget>OncoListAppointmentsAgent</invocationTarget>
-            <invocationTargetType>apex</invocationTargetType>
-            <isConfirmationRequired>false</isConfirmationRequired>
-            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-            <localDeveloperName>Onco_List_My_Appointments_Nav</localDeveloperName>
-            <masterLabel>List My Appointments</masterLabel>
-            <progressIndicatorMessage>Loading appointments...</progressIndicatorMessage>
-        </localActions>
-        <localActions>
-            <fullName>Onco_Register_Patient_Nav_179ak000002pZ01</fullName>
-            <description>Creates a Person Account chart for a first-time (new) patient using plain name and email, with optional mobile phone, date of birth, and city. Use this BEFORE Book Appointment when any of the following is true: (a) the user explicitly says they are new, have never been here before, or have no record with us; (b) Book Appointment returned an error like &quot;no matching patient found&quot; for the email; (c) the user asks &quot;how do I register&quot; or &quot;create my patient record&quot;. Required inputs: firstName, lastName, email (plain string only, e.g. jane.doe@example.com—never a JSON object, never recipientId/subject/body/to), and consentToContact=true which the user must explicitly confirm first. Optional: mobilePhone, dateOfBirth (YYYY-MM-DD), city. This action does NOT send email—email is only the chart key. Idempotent: if the email already resolves to an existing chart, it returns success=true with wasAlreadyRegistered=true and no duplicate is created; continue straight to Book Appointment. Returns patientDisplayName and registeredEmail for confirmation. Never a Salesforce record Id.</description>
-            <developerName>Onco_Register_Patient_Nav_179ak000002pZ01</developerName>
-            <invocationTarget>OncoPatientRegister</invocationTarget>
-            <invocationTargetType>apex</invocationTargetType>
-            <isConfirmationRequired>false</isConfirmationRequired>
-            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-            <localDeveloperName>Onco_Register_Patient_Nav</localDeveloperName>
-            <masterLabel>Register Patient</masterLabel>
-            <progressIndicatorMessage>Creating your patient chart...</progressIndicatorMessage>
-        </localActions>
-        <localDeveloperName>Onco_Care_Navigation</localDeveloperName>
-        <masterLabel>Onco Care Navigation</masterLabel>
-        <pluginType>Topic</pluginType>
-        <scope>Discovery, education, slot exploration, and new visit booking (including Book Appointment). Includes every question about what oncology specialties, departments, clinical programs, or cancer-care areas Onco Global offers—network-wide OR at a specific facility—and yes/no availability checks (e.g. &quot;do you have a paediatric oncology department&quot;, &quot;is medical oncology available&quot;, &quot;do you offer hemato-oncology&quot;); those MUST be answered by invoking Search Oncology Specialties, never from Knowledge or from memory. Cancel/reschedule of an existing confirmed visit uses the Appointment Manager topic.</scope>
     </localTopics>
     <masterLabel>Onco Global Patient Navigator</masterLabel>
     <plannerActions>
