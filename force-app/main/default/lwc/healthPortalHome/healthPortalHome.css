@@ -231,48 +231,87 @@
 .portal-search-wrap {
     display: block;
     background: transparent;
+    max-width: 30rem;
 }
 .portal-search {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: rgba(255, 255, 255, 0.96);
-    border-radius: var(--portal-radius);
-    padding: 0.5rem;
-    box-shadow: var(--portal-shadow-md);
+    align-items: stretch;
+    gap: 0;
+    background-color: #ffffff;
+    border-radius: 999px;
+    padding: 0.3125rem 0.3125rem 0.3125rem 1rem;
+    box-shadow: 0 18px 40px -20px rgba(2, 23, 60, 0.55),
+        0 2px 6px rgba(2, 23, 60, 0.18);
     flex-wrap: nowrap;
+    border: 1px solid rgba(2, 23, 60, 0.06);
+}
+.portal-search:focus-within {
+    box-shadow: 0 22px 48px -22px rgba(2, 23, 60, 0.6),
+        0 0 0 4px rgba(64, 158, 161, 0.25);
 }
 .portal-search__field {
     flex: 1 1 auto;
     min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
-.portal-search__field lightning-input {
-    --slds-c-input-radius-border: var(--portal-radius-sm);
-    display: block;
+.portal-search__icon {
+    flex: 0 0 auto;
+    --sds-c-icon-color-foreground-default: #6b7280;
+    color: #6b7280;
+}
+.portal-search__input {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    height: 2.5rem;
+    border: 0;
+    background: transparent;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    font-size: 1rem;
+    color: #1a1f36;
+    line-height: 1;
+}
+.portal-search__input::placeholder {
+    color: #6b7280;
+    opacity: 1;
+}
+.portal-search__input::-webkit-search-cancel-button {
+    cursor: pointer;
 }
 .portal-search__help {
     background: transparent;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.78);
     font-size: 0.85rem;
     margin: 0.75rem 0 0;
     padding: 0;
-    max-width: 44rem;
 }
 .portal-search__btn {
     flex: 0 0 auto;
-    min-height: 44px;
-    padding: 0 1.25rem;
-    border-radius: var(--portal-radius-sm);
+    align-self: center;
+    min-height: 2.75rem;
+    padding: 0 1.75rem;
+    border-radius: 999px;
     background-color: var(--portal-color-accent);
-    border-color: var(--portal-color-accent);
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
     white-space: nowrap;
+    box-shadow: 0 6px 14px -6px rgba(20, 109, 112, 0.6);
+    transition: background-color 120ms ease-in, transform 120ms ease-in;
 }
-.portal-search__btn:hover,
+.portal-search__btn:hover {
+    background-color: var(--portal-color-accent-deep);
+    transform: translateY(-1px);
+}
 .portal-search__btn:focus-visible {
     background-color: var(--portal-color-accent-deep);
-    border-color: var(--portal-color-accent-deep);
-}
-.portal-search__btn:focus-visible {
     outline: 3px solid var(--portal-color-warm);
     outline-offset: 2px;
 }
@@ -280,13 +319,13 @@
 .portal-quick-filters {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.625rem;
     align-items: center;
 }
 .portal-quick-filters__label {
     color: rgba(255, 255, 255, 0.85);
-    font-size: 0.85rem;
-    margin-right: 0.25rem;
+    font-size: 0.875rem;
+    margin-right: 0.5rem;
 }
 .portal-chip {
     appearance: none;
@@ -312,20 +351,23 @@
 
 .portal-trust-badges {
     list-style: none;
-    margin: 0;
+    margin: 2rem 0 0;
     padding: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem 1.5rem;
+    gap: 0.75rem 2rem;
 }
 .portal-trust-badge {
     display: inline-flex;
     align-items: center;
+    gap: 0.5rem;
     color: rgba(255, 255, 255, 0.9);
-    font-size: 0.85rem;
+    font-size: 0.875rem;
+    line-height: 1.2;
 }
 .portal-trust-badge lightning-icon {
     --sds-c-icon-color-foreground-default: rgba(255, 255, 255, 0.85);
+    flex: 0 0 auto;
 }
 
 /* =========================================================================
@@ -1204,6 +1246,8 @@
         flex-direction: column;
         align-items: stretch;
         gap: 0.5rem;
+        border-radius: 1.25rem;
+        padding: 0.75rem;
     }
     .portal-search__field {
         flex: 1 1 auto;
@@ -1212,6 +1256,7 @@
     .portal-search__btn {
         width: 100%;
         justify-content: center;
+        border-radius: 999px;
     }
     .portal-quick-filters {
         font-size: 0.85rem;

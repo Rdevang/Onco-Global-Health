@@ -124,29 +124,33 @@
                             aria-label="Find a provider or clinic"
                         >
                             <div class="portal-search__field">
-                                <lightning-input
+                                <lightning-icon
+                                    icon-name="utility:search"
+                                    size="x-small"
+                                    alternative-text=""
+                                    class="portal-search__icon"
+                                ></lightning-icon>
+                                <label
+                                    class="slds-assistive-text"
+                                    for="hero-search-input"
+                                    >Search providers, clinics, or specialties</label
+                                >
+                                <input
+                                    id="hero-search-input"
                                     data-id="hero-search"
                                     type="search"
-                                    label="Search providers, clinics, or specialties"
-                                    variant="label-hidden"
+                                    class="portal-search__input"
                                     placeholder="Search providers, clinics, or specialties..."
                                     value={searchTerm}
-                                    onchange={handleSearchChange}
+                                    oninput={handleSearchChange}
                                     aria-describedby="portal-search-help"
-                                ></lightning-input>
+                                />
                             </div>
                             <button
                                 type="submit"
                                 class="slds-button slds-button_brand portal-search__btn"
                                 aria-label="Search providers, clinics, or specialties"
                             >
-                                <lightning-icon
-                                    icon-name="utility:search"
-                                    size="x-small"
-                                    variant="inverse"
-                                    alternative-text=""
-                                    class="slds-m-right_x-small"
-                                ></lightning-icon>
                                 Search
                             </button>
                         </form>
@@ -201,27 +205,24 @@
                                 icon-name="utility:lock"
                                 size="x-small"
                                 alternative-text=""
-                                class="slds-m-right_x-small"
                             ></lightning-icon>
-                            HIPAA-aligned &amp; encrypted
+                            <span>HIPAA-aligned &amp; encrypted</span>
                         </li>
                         <li class="portal-trust-badge">
                             <lightning-icon
                                 icon-name="utility:shield"
                                 size="x-small"
                                 alternative-text=""
-                                class="slds-m-right_x-small"
                             ></lightning-icon>
-                            NABH accredited
+                            <span>NABH accredited</span>
                         </li>
                         <li class="portal-trust-badge">
                             <lightning-icon
                                 icon-name="utility:einstein"
                                 size="x-small"
                                 alternative-text=""
-                                class="slds-m-right_x-small"
                             ></lightning-icon>
-                            AI-assisted, clinician-verified
+                            <span>AI-assisted, clinician-verified</span>
                         </li>
                     </ul>
                 </div>
