@@ -132,6 +132,7 @@ public without sharing class OncoSchedulingBook {
                 + r.scheduledStartTimeUtc
                 + (String.isNotBlank(r.appointmentTimeZone) ? '. Time zone: ' + r.appointmentTimeZone : '')
                 + '.';
+            sendBookingConfirmationSafe(sa.Id);
             return new List<MutationResult>{ r };
         } catch (Exception e) {
             r.success = false;
@@ -167,5 +168,27 @@ public without sharing class OncoSchedulingBook {
             return null;
         }
         return d.formatGmt('yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'');
+    }
+
+    /**
+     * Build an EmailContext from the freshly inserted ServiceAppointment and
+     * dispatch the confirmation email. Any failure is swallowed so a delivery
+     * problem cannot reverse the booking.
+     */
+    @TestVisible
+    private static void sendBookingConfirmationSafe(Id appointmentId) {
+        if (appointmentId == null) {
+            return;
+        }
+        try {
+            Map<Id, OncoEmailService.EmailContext> ctxMap =
+                OncoEmailService.buildContextsForAppointments(new Set<Id>{ appointmentId });
+            OncoEmailService.EmailContext ctx = ctxMap.get(appointmentId);
+            if (ctx != null && String.isNotBlank(ctx.patientEmail)) {
+                OncoEmailService.sendBookingConfirmation(ctx);
+            }
+        } catch (Exception e) {
+            System.debug(LoggingLevel.WARN, 'OncoSchedulingBook email skipped: ' + e.getMessage());
+        }
     }
 }

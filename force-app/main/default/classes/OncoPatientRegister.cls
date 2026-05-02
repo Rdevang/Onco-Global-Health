@@ -159,7 +159,28 @@ public without sharing class OncoPatientRegister {
         r.registeredEmail = normalizedEmail;
         r.message = 'Registered ' + r.patientDisplayName + ' at ' + r.registeredEmail
             + '. You can now book an appointment with this email.';
+        sendWelcomeEmailSafe(first, last, normalizedEmail);
         return new List<RegisterResult>{ r };
+    }
+
+    /**
+     * Fire-and-forget welcome email so an email failure can never roll back
+     * the just-created Person Account.
+     */
+    @TestVisible
+    private static void sendWelcomeEmailSafe(String first, String last, String email) {
+        if (String.isBlank(email)) {
+            return;
+        }
+        try {
+            OncoEmailService.EmailContext ctx = new OncoEmailService.EmailContext();
+            ctx.patientFirstName = first;
+            ctx.patientLastName = last;
+            ctx.patientEmail = email;
+            OncoEmailService.sendPatientWelcome(ctx);
+        } catch (Exception e) {
+            System.debug(LoggingLevel.WARN, 'OncoPatientRegister welcome email skipped: ' + e.getMessage());
+        }
     }
 
     @TestVisible

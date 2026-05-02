@@ -33,11 +33,29 @@ public without sharing class OncoSchedulingCancel {
             r.success = true;
             r.serviceAppointmentId = sa.Id;
             r.message = 'Canceled.';
+            sendCancellationEmailSafe(sa.Id);
             return new List<MutationResult>{ r };
         } catch (Exception e) {
             r.success = false;
             r.message = e.getMessage();
             return new List<MutationResult>{ r };
+        }
+    }
+
+    @TestVisible
+    private static void sendCancellationEmailSafe(Id appointmentId) {
+        if (appointmentId == null) {
+            return;
+        }
+        try {
+            Map<Id, OncoEmailService.EmailContext> ctxMap =
+                OncoEmailService.buildContextsForAppointments(new Set<Id>{ appointmentId });
+            OncoEmailService.EmailContext ctx = ctxMap.get(appointmentId);
+            if (ctx != null && String.isNotBlank(ctx.patientEmail)) {
+                OncoEmailService.sendCancellationNotice(ctx);
+            }
+        } catch (Exception e) {
+            System.debug(LoggingLevel.WARN, 'OncoSchedulingCancel email skipped: ' + e.getMessage());
         }
     }
 }
