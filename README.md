@@ -1,6 +1,6 @@
 # Onco Global Patient Navigator
 
-An Agentforce-powered "digital front door" for oncology patient scheduling, built on Salesforce Health Cloud. Patients can discover facilities and specialists, register, book / reschedule / cancel appointments, and receive reminders — via web chat, WhatsApp, or SMS — without ever handling a Salesforce record Id.
+An Agentforce-powered "digital front door" for oncology patient scheduling, built on Salesforce Health Cloud. Patients can discover facilities and specialists, register, book / reschedule / cancel appointments, and receive email reminders — conversationally, without ever handling a Salesforce record Id. The current build ships the web-chat surface (Experience Cloud Embedded Messaging); WhatsApp and SMS channels are scoped in the roadmap.
 
 [![Platform](https://img.shields.io/badge/platform-Salesforce%20Health%20Cloud-00A1E0)](https://www.salesforce.com/products/health-cloud/overview/)
 [![API](https://img.shields.io/badge/API-66.0-blue)]()
@@ -20,20 +20,24 @@ An Agentforce-powered "digital front door" for oncology patient scheduling, buil
 ```mermaid
 flowchart LR
     Patient((Patient)) -->|Web chat| Portal[Experience Cloud Portal]
-    Patient -->|WhatsApp / SMS| DE[Digital Engagement]
+    Patient -.->|WhatsApp / SMS| DE[Digital Engagement]
     Portal --> EM[Embedded Messaging]
     EM --> Agent[Agentforce<br/>Onco Global Patient Navigator]
-    DE --> Agent
+    DE -.-> Agent
     Agent -->|Invocable Actions| Apex[Apex Services]
     Agent -->|Retriever| KB[Knowledge Articles]
     Apex --> HC[(Health Cloud Objects)]
     Apex --> Sch[(Salesforce Scheduler)]
-    HC --> DC[(Data Cloud)]
-    Sch --> DC
-    DC -->|Personalization| Agent
-    DC -->|Segments| Reminders[Reminder Flow]
-    Reminders --> DE
+    Apex --> Email[Transactional Email]
+    Reminders[Scheduled Apex<br/>Reminder Job] --> Email
+    HC -.-> DC[(Data Cloud)]
+    Sch -.-> DC
+    DC -.->|Personalization| Agent
+    DC -.->|Segments| Reminders
+    Reminders -.-> DE
 ```
+
+> Solid arrows = shipped in v1.0-mvp. Dotted arrows = scoped in the roadmap (Phase 07 Digital Engagement for WhatsApp / SMS in & out; Phase 08 Data Cloud for personalization and segment-driven reminders).
 
 ## Agentforce topic map
 
@@ -199,7 +203,7 @@ When phase 11 passes on a freshly deployed org, the repo is ready to tag `v1.0-m
 
 ## Roadmap & enhancements
 
-The current build covers the v1.0-mvp scope: conversational discovery, registration, booking, cancel / reschedule, and email reminders across web, WhatsApp, and SMS chat. The following enhancements are scoped but not yet built — roughly ordered by patient impact and feasibility.
+The current build covers the v1.0-mvp scope on a single channel — Experience Cloud web chat — with conversational discovery, registration, booking, cancel / reschedule, and scheduled email reminders. WhatsApp / SMS chat (inbound) and outbound transactional notifications are scoped but not yet built; the items below are roughly ordered by patient impact and feasibility.
 
 ### Notification & engagement channels
 
