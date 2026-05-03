@@ -45,6 +45,9 @@ $RECYCLE.BIN/
 # Phase 01 / Phase 07 local secrets (copy from *.template.md)
 **/WHATSAPP_BUSINESS_ACCOUNT.local.md
 
+# Internal documentation (kept local, not published to GitHub)
+docs/
+
 # Python Salesforce Functions
 **/__pycache__/
 **/.venv/
