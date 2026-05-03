@@ -197,6 +197,52 @@ The project is organised into eleven phases. Each phase folder contains its own 
 
 When phase 11 passes on a freshly deployed org, the repo is ready to tag `v1.0-mvp` and hand off for pilot rollout.
 
+## Roadmap & enhancements
+
+The current build covers the v1.0-mvp scope: conversational discovery, registration, booking, cancel / reschedule, and email reminders across web, WhatsApp, and SMS chat. The following enhancements are scoped but not yet built — roughly ordered by patient impact and feasibility.
+
+### Notification & engagement channels
+
+| Enhancement | Why | Implementation sketch |
+|:--|:--|:--|
+| **WhatsApp transactional notifications** | Most patients in our target geography prefer WhatsApp over email for booking confirmations and reminders; opens an outbound channel parallel to inbound chat. | Register HSM templates with Meta (`booking_confirmation`, `reminder_24h`, `reminder_4h`, `reschedule_notice`, `cancellation_notice`). Refactor `OncoEmailService` → `OncoNotificationService` with a per-patient preference column (`Account.PreferredChannel__c`) that fans out across email / WhatsApp / SMS. The reminder scheduler stays untouched. |
+| **Slack integration for care coordinators** | Time-sensitive events (< 24h cancellations, agent escalations, failed reminders, predicted no-shows) need eyes-on triage that email can't deliver fast enough. | Salesforce → Slack app + Apex callout to Bot-token webhook. Channel routing: `#onco-escalations` for medical-advice or billing deflections, `#onco-no-shows` for at-risk appointments, `#onco-ops-alerts` for delivery / scheduling failures. Threaded replies link back to the `ServiceAppointment` record. |
+| **Voice / IVR via Service Cloud Voice** | Reach patients without smartphones; reuse the same agent topics so logic stays in one place. | Add a voice-channel adapter; existing Agentforce topics and Apex actions are channel-agnostic. |
+| **Calendar invites (.ics)** | One-tap add to Google / Apple / Outlook calendar from the confirmation message. | Generate RFC 5545 `.ics` in `OncoEmailService.sendBookingConfirmation` and attach to email + WhatsApp document message. |
+| **Mobile push** | Future companion app for treatment-cycle patients. | Salesforce Mobile SDK + Marketing Cloud Personalization. |
+
+### Patient experience
+
+- **Multi-language support** (Hindi, Marathi, Tamil, Bengali) — detect language on first turn, store on `Account.PreferredLanguage__c`, swap pre-translated transactional templates, and route LLM turns through Trust Layer translation.
+- **Caregiver / family-member linking** — relationship-aware `patientLookupEmail` resolution so a daughter can manage her mother's bookings with documented consent (new `Patient_Caregiver__c` junction object).
+- **Document upload at booking** — biopsy reports, prior imaging, referral letters stored as `ContentVersion` linked to `ServiceAppointment`, visible to the assigned provider before consult.
+- **Telehealth consult linking** — auto-generate Zoom / Teams links when `Work_Type__c = 'Tele-Consult'`; embed in confirmation + reminder messages.
+- **Visit prep + post-visit follow-up** — pre-visit checklists (fasting, paperwork, insurance card), care-plan summaries, and NPS surveys delivered via each patient's preferred channel.
+- **Cost transparency & insurance pre-auth** — estimated patient out-of-pocket and insurer eligibility check before slot confirmation.
+
+### Clinical & operational intelligence
+
+- **No-show / cancellation prediction** — Einstein Discovery model on top of Data Cloud's unified patient timeline; surface at-risk appointments in the coordinator dashboard for proactive outreach.
+- **Clinical trial matching** — match patient profile (cancer type, stage, biomarkers) against active trials in Knowledge + Data Cloud; oncologist sign-off required before any patient-facing recommendation.
+- **Tumour-board scheduling** — find a slot where medical oncologist + radiation + surgical + pathologist are simultaneously available; new `OncoTumourBoardScheduler` action with multi-resource constraint solving.
+- **Care-plan adherence tracking** — chemotherapy-cycle reminders, follow-up imaging reminders, missed-dose alerts; chains `CarePlan` → `ServiceAppointment`.
+- **Coordinator dashboards** — slot-fill rate, no-show rate, agent-deflection rate, escalation reasons by topic; LWC console dashboards seeded from CRM Analytics.
+
+### Platform & developer experience
+
+- **Agent regression CI** — run the curated test-prompt bank against every PR via Agentforce Test Center API; block merge on routing or grounding regressions.
+- **Prompt / topic versioning** — treat topic descriptions, instructions, and action descriptions as first-class reviewed artefacts with a `CHANGELOG.md` and required reviewer for prompt changes.
+- **A/B prompt experimentation** — feature-flag layer in front of `nav_instruction_*` blocks so two phrasings can be split-tested by channel or profile.
+- **Trust Layer telemetry to ops** — pipe masking events, retrieval scores, and grounding evaluations into Data Cloud → Tableau / CRM Analytics for a single quality dashboard.
+- **Reusable Apex test fixtures** — `OncoTestDataFactory` so every new test class spins up the same facility / specialty / provider / slot graph without seed-script copy-paste.
+
+### Security & compliance enhancements
+
+- **PHI redaction in logs** — custom log producer that scrubs `Email`, `Phone`, `DateOfBirth`, and patient names from `System.debug` + Platform Events before they reach Splunk / Elastic.
+- **Field-level encryption** — Shield Platform Encryption on `Account.PersonEmail`, `Account.PersonMobilePhone`, and any free-text `ServiceAppointment.Notes__c`.
+- **Comprehensive audit trail** — `OncoAuditLog__b` Big Object entries for every agent-initiated mutation: patient id, action, before / after snapshot, topic, conversation id.
+- **Consent automation** — auto-renew or re-collect consent on lapse; record TCPA-compliant proof of opt-in for SMS / WhatsApp.
+
 ## Conventions
 
 - All metadata under `force-app/main/default/`.
